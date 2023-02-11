@@ -1,0 +1,664 @@
+game: schafkopf
+
+GameType.chance_mode = ChanceMode.EXPLICIT_STOCHASTIC
+GameType.dynamics = Dynamics.SEQUENTIAL
+GameType.information = Information.IMPERFECT_INFORMATION
+GameType.long_name = "Schafkopf"
+GameType.max_num_players = 3
+GameType.min_num_players = 3
+GameType.parameter_specification = []
+GameType.provides_information_state_string = False
+GameType.provides_information_state_tensor = False
+GameType.provides_observation_string = True
+GameType.provides_observation_tensor = True
+GameType.provides_factored_observation_string = False
+GameType.reward_model = RewardModel.TERMINAL
+GameType.short_name = "schafkopf"
+GameType.utility = Utility.ZERO_SUM
+
+NumDistinctActions() = 39
+PolicyTensorShape() = [39]
+MaxChanceOutcomes() = 32
+GetParameters() = {}
+NumPlayers() = 3
+MinUtility() = -1.0
+MaxUtility() = 1.0
+UtilitySum() = 0.0
+ObservationTensorShape() = [299]
+ObservationTensorLayout() = TensorLayout.CHW
+ObservationTensorSize() = 299
+MaxGameLength() = 35
+ToString() = "schafkopf()"
+
+# State 0
+# Phase: dealing
+# Current Player: -1
+# Deck:     🃇 🃈 🃉 🃍 🃎 🃊 🃁 🃋 🂷 🂸 🂹 🂽 🂾 🂺 🂱 🂻 🂧 🂨 🂩 🂭 🂮 🂪 🂡 🂫 🃗 🃘 🃙 🃝 🃞 🃚 🃑 🃛
+# Player 0:
+# Player 1:
+# Player 2:
+# Schafkopf:
+#
+# Game Type: unknown/pass
+IsTerminal() = False
+History() = []
+HistoryString() = ""
+IsChanceNode() = True
+IsSimultaneousNode() = False
+CurrentPlayer() = -1
+ObservationString(0) = "No Observation"
+ObservationString(1) = "No Observation"
+ObservationString(2) = "No Observation"
+ObservationTensor(0): zeros(299)
+ObservationTensor(1): zeros(299)
+ObservationTensor(2): zeros(299)
+ChanceOutcomes() = [(0, 0.03125), (1, 0.03125), (2, 0.03125), (3, 0.03125), (4, 0.03125), (5, 0.03125), (6, 0.03125), (7, 0.03125), (8, 0.03125), (9, 0.03125), (10, 0.03125), (11, 0.03125), (12, 0.03125), (13, 0.03125), (14, 0.03125), (15, 0.03125), (16, 0.03125), (17, 0.03125), (18, 0.03125), (19, 0.03125), (20, 0.03125), (21, 0.03125), (22, 0.03125), (23, 0.03125), (24, 0.03125), (25, 0.03125), (26, 0.03125), (27, 0.03125), (28, 0.03125), (29, 0.03125), (30, 0.03125), (31, 0.03125)]
+LegalActions() = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+StringLegalActions() = ["D7", "D8", "D9", "DQ", "DK", "DT", "DA", "DJ", "H7", "H8", "H9", "HQ", "HK", "HT", "HA", "HJ", "S7", "S8", "S9", "SQ", "SK", "ST", "SA", "SJ", "C7", "C8", "C9", "CQ", "CK", "CT", "CA", "CJ"]
+
+# Apply action "S8"
+action: 17
+
+# State 1
+# Phase: dealing
+# Current Player: -1
+# Deck:     🃇 🃈 🃉 🃍 🃎 🃊 🃁 🃋 🂷 🂸 🂹 🂽 🂾 🂺 🂱 🂻 🂧 🂩 🂭 🂮 🂪 🂡 🂫 🃗 🃘 🃙 🃝 🃞 🃚 🃑 🃛
+# Player 0: 🂨
+# Player 1:
+# Player 2:
+# Schafkopf:
+#
+# Game Type: unknown/pass
+IsTerminal() = False
+History() = [17]
+HistoryString() = "17"
+IsChanceNode() = True
+IsSimultaneousNode() = False
+CurrentPlayer() = -1
+ObservationString(0) = "No Observation"
+ObservationString(1) = "No Observation"
+ObservationString(2) = "No Observation"
+ObservationTensor(0): zeros(299)
+ObservationTensor(1): zeros(299)
+ObservationTensor(2): zeros(299)
+ChanceOutcomes() = [(0, 0.03225806451612903), (1, 0.03225806451612903), (2, 0.03225806451612903), (3, 0.03225806451612903), (4, 0.03225806451612903), (5, 0.03225806451612903), (6, 0.03225806451612903), (7, 0.03225806451612903), (8, 0.03225806451612903), (9, 0.03225806451612903), (10, 0.03225806451612903), (11, 0.03225806451612903), (12, 0.03225806451612903), (13, 0.03225806451612903), (14, 0.03225806451612903), (15, 0.03225806451612903), (16, 0.03225806451612903), (18, 0.03225806451612903), (19, 0.03225806451612903), (20, 0.03225806451612903), (21, 0.03225806451612903), (22, 0.03225806451612903), (23, 0.03225806451612903), (24, 0.03225806451612903), (25, 0.03225806451612903), (26, 0.03225806451612903), (27, 0.03225806451612903), (28, 0.03225806451612903), (29, 0.03225806451612903), (30, 0.03225806451612903), (31, 0.03225806451612903)]
+LegalActions() = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+StringLegalActions() = ["D7", "D8", "D9", "DQ", "DK", "DT", "DA", "DJ", "H7", "H8", "H9", "HQ", "HK", "HT", "HA", "HJ", "S7", "S9", "SQ", "SK", "ST", "SA", "SJ", "C7", "C8", "C9", "CQ", "CK", "CT", "CA", "CJ"]
+
+# Apply action "C8"
+action: 25
+
+# State 2
+# Apply action "H9"
+action: 10
+
+# State 3
+# Apply action "D9"
+action: 2
+
+# State 4
+# Apply action "DJ"
+action: 7
+
+# State 5
+# Apply action "ST"
+action: 21
+
+# State 6
+# Apply action "SA"
+action: 22
+
+# State 7
+# Apply action "HJ"
+action: 15
+
+# State 8
+# Apply action "CT"
+action: 29
+
+# State 9
+# Apply action "H7"
+action: 8
+
+# State 10
+# Apply action "D7"
+action: 0
+
+# State 11
+# Apply action "SJ"
+action: 23
+
+# State 12
+# Apply action "D8"
+action: 1
+
+# State 13
+# Apply action "C7"
+action: 24
+
+# State 14
+# Apply action "H8"
+action: 9
+
+# State 15
+# Apply action "S9"
+action: 18
+
+# State 16
+# Apply action "DT"
+action: 5
+
+# State 17
+# Apply action "DK"
+action: 4
+
+# State 18
+# Apply action "SQ"
+action: 19
+
+# State 19
+# Apply action "C9"
+action: 26
+
+# State 20
+# Apply action "SK"
+action: 20
+
+# State 21
+# Apply action "CQ"
+action: 27
+
+# State 22
+# Apply action "DQ"
+action: 3
+
+# State 23
+# Apply action "CA"
+action: 30
+
+# State 24
+# Apply action "HA"
+action: 14
+
+# State 25
+# Apply action "HQ"
+action: 11
+
+# State 26
+# Apply action "CK"
+action: 28
+
+# State 27
+# Apply action "DA"
+action: 6
+
+# State 28
+# Apply action "CJ"
+action: 31
+
+# State 29
+# Apply action "S7"
+action: 16
+
+# State 30
+# Apply action "HK"
+action: 12
+
+# State 31
+# Apply action "HT"
+action: 13
+
+# State 32
+# Phase: bidding
+# Current Player: 0
+# Deck:
+# Player 0: 🃈 🂸 🂹 🂽 🂱 🂨 🂫 🃗 🃘 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛
+# Player 2: 🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚
+# Schafkopf:     🃇 🂷
+#
+# Game Type: unknown/pass
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "PlPos:0|Phase:bidding|Hand:🃈 🂸 🂹 🂽 🂱 🂨 🂫 🃗 🃘 🃑 |Bids:unknown/pass unknown/pass unknown/pass |SoloPl:-1|Schafkopf:|Game:unknown/pass|CurrTrick(Leader:-1):"
+ObservationString(1) = "PlPos:1|Phase:bidding|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛 |Bids:unknown/pass unknown/pass unknown/pass |SoloPl:-1|Schafkopf:|Game:unknown/pass|CurrTrick(Leader:-1):"
+ObservationString(2) = "PlPos:2|Phase:bidding|Hand:🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚 |Bids:unknown/pass unknown/pass unknown/pass |SoloPl:-1|Schafkopf:|Game:unknown/pass|CurrTrick(Leader:-1):"
+ObservationTensor(0): binvec(299, 0x4880e4838502040000000001000000000000000000000000000000000000000000000000000)
+ObservationTensor(1): binvec(299, 0x285e00681302040000000001000000000000000000000000000000000000000000000000000)
+ObservationTensor(2): binvec(299, 0x18201b146902040000000001000000000000000000000000000000000000000000000000000)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [32, 33, 34, 35, 36, 37, 38]
+StringLegalActions() = ["unknown/pass", "diamonds", "hearts", "spades", "clubs", "grand", "null"]
+
+# Apply action "hearts"
+action: 34
+
+# State 33
+# Phase: discarding cards
+# Current Player: 0
+# Deck:
+# Player 0: 🃇 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃗 🃘 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛
+# Player 2: 🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚
+# Schafkopf:
+#
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "PlPos:0|Phase:discarding cards|Hand:🃇 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃗 🃘 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:-1):"
+ObservationString(1) = "PlPos:1|Phase:discarding cards|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:-1):"
+ObservationString(2) = "PlPos:2|Phase:discarding cards|Hand:🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:-1):"
+ObservationTensor(0): binvec(299, 0x4581e4838442040800000000400000000000000000000000000000000000000000000000000)
+ObservationTensor(1): binvec(299, 0x245e00681242040800000000400000000000000000000000000000000000000000000000000)
+ObservationTensor(2): binvec(299, 0x14201b146842040800000000400000000000000000000000000000000000000000000000000)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [0, 1, 8, 9, 10, 11, 14, 17, 23, 24, 25, 30]
+StringLegalActions() = ["D7", "D8", "H7", "H8", "H9", "HQ", "HA", "S8", "SJ", "C7", "C8", "CA"]
+
+# Apply action "C8"
+action: 25
+
+# State 34
+# Phase: discarding cards
+# Current Player: 0
+# Deck:
+# Player 0: 🃇 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃗 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛
+# Player 2: 🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚
+# Schafkopf:     🃘
+#
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "PlPos:0|Phase:discarding cards|Hand:🃇 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃗 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃘 |Game:hearts|CurrTrick(Leader:-1):"
+ObservationString(1) = "PlPos:1|Phase:discarding cards|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:-1):"
+ObservationString(2) = "PlPos:2|Phase:discarding cards|Hand:🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:-1):"
+ObservationTensor(0): binvec(299, 0x4581e4830442040800000080400000000000000000000000000000000000000000000000000)
+ObservationTensor(1): binvec(299, 0x245e00681242040800000000400000000000000000000000000000000000000000000000000)
+ObservationTensor(2): binvec(299, 0x14201b146842040800000000400000000000000000000000000000000000000000000000000)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [0, 1, 8, 9, 10, 11, 14, 17, 23, 24, 30]
+StringLegalActions() = ["D7", "D8", "H7", "H8", "H9", "HQ", "HA", "S8", "SJ", "C7", "CA"]
+
+# Apply action "D7"
+action: 0
+
+# State 35
+# Apply action "C7"
+action: 24
+
+# State 36
+# Phase: playing
+# Current Player: 1
+# Deck:
+# Player 0: 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛
+# Player 2: 🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player -1
+# Solo Player: 0
+# Points (Solo / Team): (0 / 0)
+# Current Trick: Leader: 0, 🃗
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "PlPos:0|Phase:playing|Hand:🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:0):🃗 "
+ObservationString(1) = "PlPos:1|Phase:playing|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃞 🃛 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:0):🃗 "
+ObservationString(2) = "PlPos:2|Phase:playing|Hand:🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:0):🃗 "
+ObservationTensor(0): binvec(299, 0x4281e4820442040900000080420000004000000000000000000000000000000000000000000)
+ObservationTensor(1): binvec(299, 0x225e00681242040800000000420000004000000000000000000000000000000000000000000)
+ObservationTensor(2): binvec(299, 0x12201b146842040800000000420000004000000000000000000000000000000000000000000)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [28]
+StringLegalActions() = ["CK"]
+
+# Apply action "CK"
+action: 28
+
+# State 37
+# Phase: playing
+# Current Player: 2
+# Deck:
+# Player 0: 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃛
+# Player 2: 🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player -1
+# Solo Player: 0
+# Points (Solo / Team): (0 / 0)
+# Current Trick: Leader: 0, 🃗 🃞
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 2
+ObservationString(0) = "PlPos:0|Phase:playing|Hand:🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:0):🃗 🃞 "
+ObservationString(1) = "PlPos:1|Phase:playing|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃛 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:0):🃗 🃞 "
+ObservationString(2) = "PlPos:2|Phase:playing|Hand:🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃙 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:0):🃗 🃞 "
+ObservationTensor(0): binvec(299, 0x4281e4820442040900000080420000004000000004000000000000000000000000000000000)
+ObservationTensor(1): binvec(299, 0x225e00680242040800000000420000004000000004000000000000000000000000000000000)
+ObservationTensor(2): binvec(299, 0x12201b146842040800000000420000004000000004000000000000000000000000000000000)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [26, 27, 29]
+StringLegalActions() = ["C9", "CQ", "CT"]
+
+# Apply action "C9"
+action: 26
+
+# State 38
+# Phase: playing
+# Current Player: 1
+# Deck:
+# Player 0: 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃛
+# Player 2: 🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃝 🃚
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player 1
+# Solo Player: 0
+# Points (Solo / Team): (0 / 4)
+# Current Trick: Leader: 1,
+# Last Trick: Leader: 0, 🃗 🃞 🃙
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "PlPos:0|Phase:playing|Hand:🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:1):|PrevTrick(Leader:0):🃗 🃞 🃙 "
+ObservationString(1) = "PlPos:1|Phase:playing|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 🃛 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):|PrevTrick(Leader:0):🃗 🃞 🃙 "
+ObservationString(2) = "PlPos:2|Phase:playing|Hand:🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):|PrevTrick(Leader:0):🃗 🃞 🃙 "
+ObservationTensor(0): binvec(299, 0x4281e4820442040900000080410000000000000000000000004000000800000000800000020)
+ObservationTensor(1): binvec(299, 0x225e00680242040800000000410000000000000000000000004000000800000000800000020)
+ObservationTensor(2): binvec(299, 0x12201b142842040800000000410000000000000000000000004000000800000000800000020)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [2, 4, 5, 6, 7, 18, 19, 21, 31]
+StringLegalActions() = ["D9", "DK", "DT", "DA", "DJ", "S9", "SQ", "ST", "CJ"]
+
+# Apply action "CJ"
+action: 31
+
+# State 39
+# Phase: playing
+# Current Player: 2
+# Deck:
+# Player 0: 🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪
+# Player 2: 🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃝 🃚
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player 1
+# Solo Player: 0
+# Points (Solo / Team): (0 / 4)
+# Current Trick: Leader: 1, 🃛
+# Last Trick: Leader: 0, 🃗 🃞 🃙
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 2
+ObservationString(0) = "PlPos:0|Phase:playing|Hand:🃈 🂷 🂸 🂹 🂽 🂱 🂨 🂫 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:1):🃛 |PrevTrick(Leader:0):🃗 🃞 🃙 "
+ObservationString(1) = "PlPos:1|Phase:playing|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):🃛 |PrevTrick(Leader:0):🃗 🃞 🃙 "
+ObservationString(2) = "PlPos:2|Phase:playing|Hand:🃍 🂾 🂺 🂻 🂧 🂮 🂡 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):🃛 |PrevTrick(Leader:0):🃗 🃞 🃙 "
+ObservationTensor(0): binvec(299, 0x4281e4820442040900000080410000000080000000000000004000000800000000800000020)
+ObservationTensor(1): binvec(299, 0x225e00680042040800000000410000000080000000000000004000000800000000800000020)
+ObservationTensor(2): binvec(299, 0x12201b142842040800000000410000000080000000000000004000000800000000800000020)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [12, 13, 15]
+StringLegalActions() = ["HK", "HT", "HJ"]
+
+# Apply action "HT"
+action: 13
+
+# State 40
+# Apply action "HA"
+action: 14
+
+# State 41
+# Phase: playing
+# Current Player: 1
+# Deck:
+# Player 0: 🃈 🂷 🂸 🂹 🂽 🂨 🂫 🃑
+# Player 1: 🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪
+# Player 2: 🃍 🂾 🂻 🂧 🂮 🂡 🃝 🃚
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player 1
+# Solo Player: 0
+# Points (Solo / Team): (0 / 27)
+# Current Trick: Leader: 1,
+# Last Trick: Leader: 1, 🃛 🂺 🂱
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "PlPos:0|Phase:playing|Hand:🃈 🂷 🂸 🂹 🂽 🂨 🂫 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:1):|PrevTrick(Leader:1):🃛 🂺 🂱 "
+ObservationString(1) = "PlPos:1|Phase:playing|Hand:🃉 🃎 🃊 🃁 🃋 🂩 🂭 🂪 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):|PrevTrick(Leader:1):🃛 🂺 🂱 "
+ObservationString(2) = "PlPos:2|Phase:playing|Hand:🃍 🂾 🂻 🂧 🂮 🂡 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):|PrevTrick(Leader:1):🃛 🂺 🂱 "
+ObservationTensor(0): binvec(299, 0x4281e0820442040900000080410000000000000000000000002000000010004000000020000)
+ObservationTensor(1): binvec(299, 0x225e00680042040800000000410000000000000000000000002000000010004000000020000)
+ObservationTensor(2): binvec(299, 0x122013142842040800000000410000000000000000000000002000000010004000000020000)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [2, 4, 5, 6, 7, 18, 19, 21]
+StringLegalActions() = ["D9", "DK", "DT", "DA", "DJ", "S9", "SQ", "ST"]
+
+# Apply action "DT"
+action: 5
+
+# State 42
+# Phase: playing
+# Current Player: 2
+# Deck:
+# Player 0: 🃈 🂷 🂸 🂹 🂽 🂨 🂫 🃑
+# Player 1: 🃉 🃎 🃁 🃋 🂩 🂭 🂪
+# Player 2: 🃍 🂾 🂻 🂧 🂮 🂡 🃝 🃚
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player 1
+# Solo Player: 0
+# Points (Solo / Team): (0 / 27)
+# Current Trick: Leader: 1, 🃊
+# Last Trick: Leader: 1, 🃛 🂺 🂱
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14, 5]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14, 5"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 2
+ObservationString(0) = "PlPos:0|Phase:playing|Hand:🃈 🂷 🂸 🂹 🂽 🂨 🂫 🃑 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:1):🃊 |PrevTrick(Leader:1):🃛 🂺 🂱 "
+ObservationString(1) = "PlPos:1|Phase:playing|Hand:🃉 🃎 🃁 🃋 🂩 🂭 🂪 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):🃊 |PrevTrick(Leader:1):🃛 🂺 🂱 "
+ObservationString(2) = "PlPos:2|Phase:playing|Hand:🃍 🂾 🂻 🂧 🂮 🂡 🃝 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:1):🃊 |PrevTrick(Leader:1):🃛 🂺 🂱 "
+ObservationTensor(0): binvec(299, 0x4281e0820442040900000080410200000000000000000000002000000010004000000020000)
+ObservationTensor(1): binvec(299, 0x225600680042040800000000410200000000000000000000002000000010004000000020000)
+ObservationTensor(2): binvec(299, 0x122013142842040800000000410200000000000000000000002000000010004000000020000)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [3]
+StringLegalActions() = ["DQ"]
+
+# Apply action "DQ"
+action: 3
+
+# State 43
+# Apply action "D8"
+action: 1
+
+# State 44
+# Apply action "DK"
+action: 4
+
+# State 45
+# Apply action "S7"
+action: 16
+
+# State 46
+# Apply action "S8"
+action: 17
+
+# State 47
+# Apply action "S9"
+action: 18
+
+# State 48
+# Apply action "SA"
+action: 22
+
+# State 49
+# Apply action "SJ"
+action: 23
+
+# State 50
+# Apply action "HQ"
+action: 11
+
+# State 51
+# Apply action "DJ"
+action: 7
+
+# State 52
+# Apply action "HJ"
+action: 15
+
+# State 53
+# Apply action "CQ"
+action: 27
+
+# State 54
+# Apply action "CA"
+action: 30
+
+# State 55
+# Apply action "ST"
+action: 21
+
+# State 56
+# Phase: playing
+# Current Player: 0
+# Deck:
+# Player 0: 🂷 🂸 🂹
+# Player 1: 🃉 🃁 🂭
+# Player 2: 🂾 🂮 🃚
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player 0
+# Solo Player: 0
+# Points (Solo / Team): (37 / 51)
+# Current Trick: Leader: 0,
+# Last Trick: Leader: 2, 🃝 🃑 🂪
+# Game Type: hearts
+IsTerminal() = False
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14, 5, 3, 1, 4, 16, 17, 18, 22, 23, 11, 7, 15, 27, 30, 21]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14, 5, 3, 1, 4, 16, 17, 18, 22, 23, 11, 7, 15, 27, 30, 21"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "PlPos:0|Phase:playing|Hand:🂷 🂸 🂹 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:0):|PrevTrick(Leader:2):🃝 🃑 🂪 "
+ObservationString(1) = "PlPos:1|Phase:playing|Hand:🃉 🃁 🂭 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:0):|PrevTrick(Leader:2):🃝 🃑 🂪 "
+ObservationString(2) = "PlPos:2|Phase:playing|Hand:🂾 🂮 🃚 |Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:0):|PrevTrick(Leader:2):🃝 🃑 🂪 "
+ObservationTensor(0): binvec(299, 0x4201c0000042040900000080420000000000000000000000001000000100000000200000400)
+ObservationTensor(1): binvec(299, 0x224400200042040800000000420000000000000000000000001000000100000000200000400)
+ObservationTensor(2): binvec(299, 0x120010100842040800000000420000000000000000000000001000000100000000200000400)
+Rewards() = [0, 0, 0]
+Returns() = [0, 0, 0]
+LegalActions() = [8, 9, 10]
+StringLegalActions() = ["H7", "H8", "H9"]
+
+# Apply action "H7"
+action: 8
+
+# State 57
+# Apply action "D9"
+action: 2
+
+# State 58
+# Apply action "HK"
+action: 12
+
+# State 59
+# Apply action "SK"
+action: 20
+
+# State 60
+# Apply action "H8"
+action: 9
+
+# State 61
+# Apply action "SQ"
+action: 19
+
+# State 62
+# Apply action "H9"
+action: 10
+
+# State 63
+# Apply action "DA"
+action: 6
+
+# State 64
+# Apply action "CT"
+action: 29
+
+# State 65
+# Phase: game over
+# Current Player: 0
+# Deck:
+# Player 0:
+# Player 1:
+# Player 2:
+# Schafkopf:     🃇 🃘
+#
+# Last trick won by player 0
+# Solo Player: 0
+# Points (Solo / Team): (65 / 55)
+# Current Trick: Leader: 0, 🂹 🃁 🃚
+# Last Trick: Leader: 0, 🂹 🃁 🃚
+# Game Type: hearts
+IsTerminal() = True
+History() = [17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14, 5, 3, 1, 4, 16, 17, 18, 22, 23, 11, 7, 15, 27, 30, 21, 8, 2, 12, 20, 9, 19, 10, 6, 29]
+HistoryString() = "17, 25, 10, 2, 7, 21, 22, 15, 29, 8, 0, 23, 1, 24, 9, 18, 5, 4, 19, 26, 20, 27, 3, 30, 14, 11, 28, 6, 31, 16, 12, 13, 34, 25, 0, 24, 28, 26, 31, 13, 14, 5, 3, 1, 4, 16, 17, 18, 22, 23, 11, 7, 15, 27, 30, 21, 8, 2, 12, 20, 9, 19, 10, 6, 29"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = -4
+ObservationString(0) = "PlPos:0|Phase:game over|Hand:|Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:🃇 🃘 |Game:hearts|CurrTrick(Leader:-1):|PrevTrick(Leader:0):🂹 🃁 🃚 "
+ObservationString(1) = "PlPos:1|Phase:game over|Hand:|Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:-1):|PrevTrick(Leader:0):🂹 🃁 🃚 "
+ObservationString(2) = "PlPos:2|Phase:game over|Hand:|Bids:hearts unknown/pass unknown/pass |SoloPl:0|Schafkopf:|Game:hearts|CurrTrick(Leader:-1):|PrevTrick(Leader:0):🂹 🃁 🃚 "
+ObservationTensor(0): binvec(299, 0x400000000042040900000080400000000000000000000000004002000000200000000000004)
+ObservationTensor(1): binvec(299, 0x200000000042040800000000400000000000000000000000004002000000200000000000004)
+ObservationTensor(2): binvec(299, 0x100000000042040800000000400000000000000000000000004002000000200000000000004)
+Rewards() = [0.0416666666666667, -0.0208333333333333, -0.0208333333333333]
+Returns() = [0.0416666666666667, -0.0208333333333333, -0.0208333333333333]

@@ -113,6 +113,7 @@ EXPECTED_GAMES = frozenset([
     "repeated_game",
     "rbc",
     "restricted_nash_response",
+    "schafkopf",
     "sheriff",
     "skat",
     "start_at",

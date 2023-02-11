@@ -69,7 +69,8 @@ DOWNLOAD_CACHE_DIR=${DOWNLOAD_CACHE_DIR:-$DEFAULT_DOWNLOAD_CACHE_DIR}
 if [[ ! -x `which git` ]]; then
   echo "Did not find git, attempting to install it."
   if [[ "$OSTYPE" == "linux-gnu" ]]; then
-    sudo apt-get install git
+    # sudo apt-get install git
+    conda install -y git
   elif [[ "$OSTYPE" == "darwin"* ]]; then  # Mac OSX
     brew install git
   else
