@@ -32,6 +32,13 @@
 // CURRENT LIMITATIONS
 //
 // GAME CHARACTERISTICS
+// Sauspiel with Rufsau
+// Hochzeit
+// (Farb-)Wenz
+// (Farb-)Geier
+// Farb-Solo
+// Ramsch
+// Stock
 //
 // ACTION SPACE
 
@@ -39,23 +46,25 @@ namespace open_spiel {
 namespace schafkopf {
 
 inline constexpr int kNumRanks = 8;
+// Suits: Eichel, Gras, Herz, Schellen
 inline constexpr int kNumSuits = 4;
 inline constexpr int kNumCards = kNumRanks * kNumSuits;
-inline constexpr int kNumPlayers = 3;
-inline constexpr int kNumCardsInSchafkopf = 2;
-inline constexpr int kNumGameTypes = 7;
-inline constexpr int kNumTricks = (kNumCards - kNumCardsInSchafkopf) / kNumPlayers;
-inline constexpr int kBiddingActionBase = kNumCards;  // First bidding action.
+inline constexpr int kNumPlayers = 4;
+inline constexpr int kNumGameTypes = 18;
+inline constexpr int kNumTricks = kNumCards / kNumPlayers;
+inline constexpr int kBiddingActionBase = kNumCards;  // First bidding action after card action id.
 inline constexpr int kNumBiddingActions = kNumGameTypes;
+// CHECK
 inline constexpr int kNumActions = kNumCards + kNumBiddingActions;
 inline constexpr char kEmptyCardSymbol[] = "🂠";
 
+// CHECK
 inline constexpr int kObservationTensorSize =
     kNumPlayers                    // Player position
     + 3                            // Phase
     + kNumCards                    // Players cards
     + kNumPlayers * kNumGameTypes  // All players' bids
-    + kNumPlayers                  // Who's playing solo
+    + kNumPlayers                  // Who's playing
     + kNumCards                    // Cards in the Schafkopf
     + kNumGameTypes                // Game type
     + kNumPlayers                  // Who started the current trick
@@ -66,48 +75,70 @@ inline constexpr int kObservationTensorSize =
 enum SchafkopfGameType {
   kUnknownGame = 0,
   kPass = 0,
-  kDiamondsTrump = 1,
-  kHeartsTrump = 2,
-  kSpadesTrump = 3,
-  kClubsTrump = 4,
-  kGrand = 5,
-  kNullGame = 6
+  kSauspiel=1,
+  kHochzeit=2,
+  kGeier_Schellen=3,
+  kGeier_Herz=4,
+  kGeier_Gras=5,
+  kGeier_Eichel=6,
+  kWenz_Schellen=7,
+  kWenz_Herz=8,
+  kWenz_Gras=9,
+  kWenz_Eichel=10,
+  kGeier=11,
+  kWenz=12,
+  kSolo_Schellen=13,
+  kSolo_Herz=14,
+  kSolo_Gras=15,
+  kSolo_Eichel=16,
+  kRamsch = 17,
+  kStock = 18,
 };
-enum Suit {kDiamonds = 0, kHearts = 1, kSpades = 2, kClubs = 3};
+enum Suit {
+  kSchellen = 0,
+  kHerz = 1,
+  kGras = 2,
+  kEichel = 3
+};
 enum Rank {
   kSeven = 0,
   kEight = 1,
   kNine = 2,
-  kQueen = 3,
-  kKing = 4,
-  kTen = 5,
-  kAce = 6,
-  kJack = 7
+  kTen = 3,
+  kUnter = 4,
+  kOber = 5,
+  kKing = 6,
+  kAce = 7
 };
 enum CardLocation{
   kDeck = 0,
   kHand0 = 1,
   kHand1 = 2,
   kHand2 = 3,
-  kSchafkopf = 4,
-  kTrick = 5
+  kHand3 = 4,
+  kTrick = 5,
+  kHochzeiter = 6
 };
 enum Phase {
   kDeal = 0,
   kBidding = 1,
-  kDiscardCards = 2,
-  kPlay = 3,
-  kGameOver = 4};
+  kRufsau = 2,
+  kHeiraten = 3,
+  kSteigern = 4,
+  kPlay = 5,
+  kGameOver = 6
+};
 
-// This is the information about one trick, i.e. up to three cards where each
+// This is the information about one trick, i.e. up to four cards where each
 // card was played by one player.
+// Stich
 class Trick {
  public:
   Trick() : Trick{-1} {}
   Trick(Player leader) { leader_ = leader; }
   int FirstCard() const;
   Player Leader() const { return leader_; }
-  // How many cards have been played in the trick. Between 0 and 3.
+  // How many cards have been played in the trick. Between 0 and 4.
   int CardsPlayed() const { return cards_.size(); }
   // Returns a vector of the cards played in this trick. These are ordered by
   // the order of play, i.e. the first card is not necessarily played by player
@@ -159,11 +190,13 @@ class SchafkopfState : public State {
  private:
   std::vector<Action> DealLegalActions() const;
   std::vector<Action> BiddingLegalActions() const;
-  std::vector<Action> DiscardCardsLegalActions() const;
+  std::vector<Action> SteigernLegalActions() const;
+  std::vector<Action> RufsauLegalActions() const;
   std::vector<Action> PlayLegalActions() const;
   void ApplyDealAction(int card);
   void ApplyBiddingAction(int game_type);
-  void ApplyDiscardCardsAction(int card);
+  void ApplySteigernAction(int game_type);
+  void ApplyRufsauAction(int rufsau);
   void ApplyPlayAction(int card);
 
   void EndBidding(Player winner, SchafkopfGameType game_type);
@@ -174,7 +207,6 @@ class SchafkopfState : public State {
   int NullOrder(Rank rank) const;
   int WinsTrick() const;
   void ScoreUp();
-  int CardsInSchafkopf() const;
   int CurrentTrickIndex() const {
     return std::min(kNumTricks - 1, num_cards_played_ / kNumPlayers);
   }
@@ -185,20 +217,24 @@ class SchafkopfState : public State {
   }
   std::string CardLocationsToString() const;
 
-  SchafkopfGameType game_type_ = kUnknownGame;   // The trump suit (or notrumps)
+  SchafkopfGameType game_type_ = kUnknownGame;
   Phase phase_ = kDeal;
   // CardLocation for each card.
   std::array<CardLocation, kNumCards> card_locations_;
   std::array<int, kNumPlayers> player_bids_;
+  int highest_game_ = 0;
+  int highest_player_ = 0;
+  int rufsau_;
 
   // Play related.
-  Player solo_player_ = kChancePlayerId;
+  Player spieler_ = kChancePlayerId;
+  Player partner_ = -1;
   Player current_player_ = kChancePlayerId;  // The player next to make a move.
   Player last_trick_winner_ = kChancePlayerId;
   int num_cards_played_ = 0;
   std::array<Trick, kNumTricks> tricks_{};  // Tricks played so far.
-  int points_solo_ = 0;
-  int points_team_ = 0;
+  int points_spieler_ = 0;
+  int points_nicht_spieler_ = 0;
   std::vector<double> returns_ = std::vector<double>(kNumPlayers);
 };
 
