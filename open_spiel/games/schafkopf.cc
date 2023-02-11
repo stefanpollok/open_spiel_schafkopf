@@ -25,15 +25,15 @@ namespace open_spiel {
 namespace schafkopf {
 namespace {
 
-const GameType kGameType{/*short_name=*/"schafkopf",
+const GameType kGameType{/*short_name=*/"Sk",
                          /*long_name=*/"Schafkopf",
                          GameType::Dynamics::kSequential,
                          GameType::ChanceMode::kExplicitStochastic,
                          GameType::Information::kImperfectInformation,
                          GameType::Utility::kZeroSum,
                          GameType::RewardModel::kTerminal,
-                         /*max_num_players=*/3,
-                         /*min_num_players=*/3,
+                         /*max_num_players=*/4,
+                         /*min_num_players=*/4,
                          /*provides_information_state_string=*/false,
                          /*provides_information_state_tensor=*/false,
                          /*provides_observation_string=*/true,
@@ -57,11 +57,18 @@ Suit CardSuit(int card) {
 Rank CardRank(int card) {
   return static_cast<Rank>(card % 8);
 }
+// Schellen : Diamonds
+// Blatt / Gras : Spades
+// Herz : Hearts
+// Eichel : Clubs / Kreuz
+// Unter : Jack
+// Ober : Queen
 const std::vector<std::string> kCardSymbols = {
-  "🃇", "🃈", "🃉", "🃍", "🃎", "🃊", "🃁", "🃋",
-  "🂷", "🂸", "🂹", "🂽", "🂾", "🂺", "🂱", "🂻",
-  "🂧", "🂨", "🂩", "🂭", "🂮", "🂪", "🂡", "🂫",
-  "🃗", "🃘", "🃙", "🃝", "🃞", "🃚", "🃑", "🃛"};
+  "🃇", "🃈", "🃉", "🃊", "🃋", "🃍", "🃎", "🃁",
+  "🂷", "🂸", "🂹", "🂺", "🂻", "🂽", "🂾", "🂱",
+  "🂧", "🂨", "🂩", "🂪", "🂫", "🂭", "🂮", "🂡",
+  "🃗", "🃘", "🃙", "🃚", "🃛", "🃝", "🃞", "🃑"
+};
 
 
 std::string ToCardSymbol(int card) {
@@ -74,14 +81,14 @@ std::string ToCardSymbol(int card) {
 
 std::string SuitToString(Suit suit) {
   switch (suit) {
-    case kDiamonds:
-      return "D";
-    case kHearts:
+    case kEichel:
+      return "E";
+    case kGras:
+      return "G";
+    case kHerz:
       return "H";
-    case kSpades:
+    case kSchellen:
       return "S";
-    case kClubs:
-      return "C";
     default:
       return "error";
   }
@@ -95,16 +102,16 @@ std::string RankToString(Rank rank) {
       return "8";
     case kNine:
       return "9";
-    case kQueen:
-      return "Q";
+    case kTen:
+      return "10";
+    case kUnter:
+      return "U";    
+    case kOber:
+      return "O";
     case kKing:
       return "K";
-    case kTen:
-      return "T";
     case kAce:
       return "A";
-    case kJack:
-      return "J";
     default:
       return "error";
   }
@@ -116,8 +123,12 @@ std::string PhaseToString(Phase phase) {
       return "dealing";
     case kBidding:
       return "bidding";
-    case kDiscardCards:
-      return "discarding cards";
+    case kSteigern:
+      return "steigern";
+    case kRufsau:
+      return "calling Rufsau";
+    case kHeiraten:
+      return "Hochzeit";
     case kPlay:
       return "playing";
     case kGameOver:
@@ -129,7 +140,9 @@ std::string PhaseToString(Phase phase) {
 
 int CardValue(int card) {
   switch (CardRank(card)) {
-    case kQueen:
+    case kUnter:
+      return 2;
+    case kOber:
       return 3;
     case kKing:
       return 4;
@@ -137,8 +150,6 @@ int CardValue(int card) {
       return 10;
     case kAce:
       return 11;
-    case kJack:
-      return 2;
     default:
       return 0;  // Seven, eight and nine.
   }
@@ -161,18 +172,42 @@ std::string SchafkopfGameTypeToString(SchafkopfGameType trump_game) {
   switch (trump_game) {
     case kUnknownGame:
       return "unknown/pass";
-    case kDiamondsTrump:
-      return "diamonds";
-    case kHeartsTrump:
-      return "hearts";
-    case kSpadesTrump:
-      return "spades";
-    case kClubsTrump:
-      return "clubs";
-    case kGrand:
-      return "grand";
-    case kNullGame:
-      return "null";
+    case kSauspiel:
+      return "Saupsiel";
+    case kHochzeit:
+      return "Hochzeit";
+    case kWenz_Eichel:
+      return "Eichel-Wenz";
+    case kWenz_Gras:
+      return "Gras-Wenz";
+    case kWenz_Herz:
+      return "Herz-Wenz";
+    case kWenz_Schellen:
+      return "Schellen-Wenz";
+    case kWenz:
+      return "Wenz";
+    case kGeier_Eichel:
+      return "Eichel-Geier";
+    case kGeier_Gras:
+      return "Gras-Geier";
+    case kGeier_Herz:
+      return "Herz-Geier";
+    case kGeier_Schellen:
+      return "Schellen-Geier";
+    case kGeier:
+      return "Geier";
+    case kSolo_Eichel:
+      return "Eichel-Solo";
+    case kSolo_Gras:
+      return "Gras-Solo";
+    case kSolo_Herz:
+      return "Herz-Solo";
+    case kSolo_Schellen:
+      return "Schellen-Solo";
+    case kRamsch:
+      return "Ramsch";
+    case kStock:
+      return "Stock";
     default:
       return "error";
   }
@@ -186,12 +221,16 @@ CardLocation PlayerToLocation(int player) {
       return kHand1;
     case 2:
       return kHand2;
+    case 3:
+      return kHand3;
+    case 4:
+      return kHochzeiter;
     default:
       return kDeck;
   }
 }
 
-// *********************************** Trick ***********************************
+// *********************************** Stich / Trick ***********************************
 
 int Trick::FirstCard() const {
   if (cards_.empty()) {
@@ -208,7 +247,7 @@ void Trick::PlayCard(int card) {
 
 int Trick::PlayerAtPosition(int position) const {
   SPIEL_CHECK_GE(position, 0);
-  SPIEL_CHECK_LE(position, 2);
+  SPIEL_CHECK_LE(position, 3);
   return (leader_ + position) % kNumPlayers;
 }
 
@@ -256,9 +295,9 @@ std::string SchafkopfState::ToString() const {
   if (phase_ == kPlay || phase_ == kGameOver) {
     absl::StrAppendFormat(&result, "Last trick won by player %d\n",
                           last_trick_winner_);
-    absl::StrAppendFormat(&result, "Solo Player: %d\n", solo_player_);
-    absl::StrAppendFormat(&result, "Points (Solo / Team): (%d / %d)\n",
-                          points_solo_, points_team_);
+    absl::StrAppendFormat(&result, "Spieler: %d\n", spieler_);
+    absl::StrAppendFormat(&result, "Points (Spieler / Nicht-Spieler): (%d / %d)\n",
+                          points_spieler_, points_nicht_spieler_);
     absl::StrAppendFormat(&result, "Current Trick: %s\n",
                           CurrentTrick().ToString());
     if (CurrentTrickIndex() > 0) {
@@ -272,19 +311,51 @@ std::string SchafkopfState::ToString() const {
 }
 
 bool SchafkopfState::IsTrump(int card) const {
-  // Nothing is trump in Null games. Otherwise Jacks are always trump. In a Suit
-  // game all cards of that suits are trump as well as Jacks.
-  if (game_type_ == kNullGame) return false;
-  if (CardRank(card) == kJack) return true;
+  // Herz is usually the trump suit, unless otherwise declared.
+  // In Wenz (only Unter) and Geier (only Ober), there is no trump suit.
+  // Ober are the highest trump, followed by the four Unter.
+  if ((CardRank(card) == kOber || CardRank(card) == kUnter) &&
+      (game_type_ == kSauspiel || game_type_ == kHochzeit || game_type_ == kRamsch ||
+       game_type_ == kSolo_Eichel || game_type_ == kSolo_Gras ||
+       game_type_ == kSolo_Herz || game_type_ == kSolo_Schellen)) return true;
+
+  if (CardRank(card) == kUnter && (game_type_ == kWenz || game_type_ == kWenz_Eichel ||
+      game_type_ == kWenz_Gras || game_type_ == kWenz_Herz || game_type_ == kWenz_Schellen)) return true;
+
+  if (CardRank(card) == kOber && (game_type_ == kGeier || game_type_ == kGeier_Eichel ||
+      game_type_ == kGeier_Gras || game_type_ == kGeier_Herz || game_type_ == kGeier_Schellen)) return true;
+
   switch (game_type_) {
-    case kDiamondsTrump:
-      return CardSuit(card) == kDiamonds;
-    case kHeartsTrump:
-      return CardSuit(card) == kHearts;
-    case kSpadesTrump:
-      return CardSuit(card) == kSpades;
-    case kClubsTrump:
-      return CardSuit(card) == kClubs;
+    case kSauspiel:
+      return CardSuit(card) == kHerz;
+    case kHochzeit:
+      return CardSuit(card) == kHerz;
+    case kRamsch:
+      return CardSuit(card) == kHerz;
+    case kWenz_Eichel:
+      return CardSuit(card) == kEichel;
+    case kWenz_Gras:
+      return CardSuit(card) == kGras;
+    case kWenz_Herz:
+      return CardSuit(card) == kHerz;
+    case kWenz_Schellen:
+      return CardSuit(card) == kSchellen;
+    case kGeier_Eichel:
+      return CardSuit(card) == kEichel;
+    case kGeier_Gras:
+      return CardSuit(card) == kGras;
+    case kGeier_Herz:
+      return CardSuit(card) == kHerz;
+    case kGeier_Schellen:
+      return CardSuit(card) == kSchellen;
+    case kSolo_Eichel:
+      return CardSuit(card) == kEichel;
+    case kSolo_Gras:
+      return CardSuit(card) == kGras;
+    case kSolo_Herz:
+      return CardSuit(card) == kHerz;
+    case kSolo_Schellen:
+      return CardSuit(card) == kSchellen;
     default:
       return false;
   }
@@ -292,13 +363,9 @@ bool SchafkopfState::IsTrump(int card) const {
 
 int SchafkopfState::CardOrder(int card, int first_card) const {
   if (IsTrump(card)) {
-    return 7 + TrumpOrder(card);
+    return kNumRanks + TrumpOrder(card);
   } else if (CardSuit(card) == CardSuit(first_card)) {  // Following suit.
-    if (game_type_ == kNullGame) {
-      return NullOrder(CardRank(card));
-    } else {
-      return static_cast<int>(CardRank(card));
-    }
+    return static_cast<int>(CardRank(card));
   } else {
     return -1;
   }
@@ -307,33 +374,12 @@ int SchafkopfState::CardOrder(int card, int first_card) const {
 int SchafkopfState::TrumpOrder(int card) const {
   if (!IsTrump(card)) {
     return -1;
-  } else if (CardRank(card) == kJack) {
-    return static_cast<int>(CardSuit(card)) + static_cast<int>(kJack);
+  } else if (CardRank(card) == kOber) {
+    return static_cast<int>(CardSuit(card)) + kNumRanks + kNumSuits;
+  } else if (CardRank(card) == kUnter) {
+    return static_cast<int>(CardSuit(card)) + kNumRanks;
   } else {
     return static_cast<int>(CardRank(card));
-  }
-}
-
-int SchafkopfState::NullOrder(Rank rank) const {
-  switch (rank) {
-    case kSeven:
-      return 0;
-    case kEight:
-      return 1;
-    case kNine:
-      return 2;
-    case kTen:
-      return 3;
-    case kJack:
-      return 4;
-    case kQueen:
-      return 5;
-    case kKing:
-      return 6;
-    case kAce:
-      return 7;
-    default:
-      return -1;
   }
 }
 
@@ -356,8 +402,10 @@ void SchafkopfState::DoApplyAction(Action action) {
       return ApplyDealAction(action);
     case kBidding:
       return ApplyBiddingAction(action - kBiddingActionBase);
-    case kDiscardCards:
-      return ApplyDiscardCardsAction(action);
+    case kSteigern:
+      return ApplySteigernAction(action);
+    case kRufsau:
+      return ApplyRufsauAction(action);
     case kPlay:
       return ApplyPlayAction(action);
     case kGameOver:
@@ -365,29 +413,26 @@ void SchafkopfState::DoApplyAction(Action action) {
   }
 }
 
+// TODO: Possibly two deal action with "Klopfer" in between
 void SchafkopfState::ApplyDealAction(int card) {
   SPIEL_CHECK_EQ(card_locations_[card], kDeck);
   int deal_round = history_.size();
-  // Cards 0-2, 11-14, 23-25 to player 1.
-  // Cards 3-5, 15-18, 26-28 to player 2.
-  // Cards 6-8, 19-22, 29-31 to player 3.
-  // Cards 9-10 into the Schafkopf.
-  // While this might seem a bit weird, this is the official order Schafkopf cards
-  // are dealt.
-  if ((deal_round >= 0 && deal_round <= 2) ||
-      (deal_round >= 11 && deal_round <= 14) ||
-      (deal_round >= 23 && deal_round <= 25)) {
+  // Cards 0-4, 17-20 to player 1.
+  // Cards 5-8, 21-24 to player 2.
+  // Cards 9-12, 25-28 to player 3.
+  // Cards 13-16, 29-32 to player 4.
+  if ((deal_round >= 0 && deal_round <= 3) ||
+      (deal_round >= 16 && deal_round <= 19)) {
     card_locations_[card] = kHand0;
-  } else if ((deal_round >= 3 && deal_round <= 5) ||
-      (deal_round >= 15 && deal_round <= 18) ||
-      (deal_round >= 26 && deal_round <= 28)) {
+  } else if ((deal_round >= 4 && deal_round <= 7) ||
+      (deal_round >= 20 && deal_round <= 23)) {
     card_locations_[card] = kHand1;
-  } else if ((deal_round >= 6 && deal_round <= 8) ||
-      (deal_round >= 19 && deal_round <= 22) ||
-      (deal_round >= 29 && deal_round <= 31)) {
+  } else if ((deal_round >= 8 && deal_round <= 11) ||
+      (deal_round >= 24 && deal_round <= 27)) {
     card_locations_[card] = kHand2;
-  } else if (deal_round == 9 || deal_round == 10) {
-    card_locations_[card] = kSchafkopf;
+  } else if ((deal_round >= 12 && deal_round <= 15) ||
+      (deal_round >= 28 && deal_round <= 31)) {
+    card_locations_[card] = kHand3;
   }
   if (deal_round == kNumCards - 1) {
     current_player_ = 0;
@@ -395,53 +440,94 @@ void SchafkopfState::ApplyDealAction(int card) {
   }
 }
 
+// TODO: Add Hochzeit
 void SchafkopfState::ApplyBiddingAction(int game_type) {
-  // Simplified bidding as first come first serve. Players can say if they want
-  // to play or not on a first come first serve basis. Currently, the solo
-  // player is not able to touch the Schafkopf.
-  player_bids_[current_player_] = game_type;
-  if (game_type == kPass) {
-    if (current_player_ < 2) {
-      current_player_ = NextPlayer();
-    } else {  // No one wants to play.
-      phase_ = kGameOver;
-    }
-  } else {
-    EndBidding(current_player_, SchafkopfGameType(game_type));
-  }
-}
+  // if (!steigern_) player_bids_[current_player_] = game_type;
+  // highest_game_ = *std::max_element(player_bids_.begin(), player_bids_.end());
+  // highest_player_ = std::distance(player_bids_.begin(), std::max_element(player_bids_.begin(), player_bids_.end()));
 
-void SchafkopfState::EndBidding(Player winner, SchafkopfGameType game_type) {
-    solo_player_ = winner;
-    current_player_ = winner;
-    game_type_ = game_type;
-    // Winner takes up Schafkopf cards.
-    for (int card = 0; card < kNumCards; card++) {
-      if (card_locations_[card] == kSchafkopf) {
-        card_locations_[card] = PlayerToLocation(winner);
+  // Check for new highest game
+  if (game_type > highest_game_) {
+    highest_game_ = game_type;
+    highest_player_ = current_player_;
+  }
+  // All four players have made a choice      
+  if (current_player_ == 3) {
+    // Check for Ramsch
+    if (highest_game_ == kPass) {
+      EndBidding(-1, SchafkopfGameType(kRamsch));
+      return;
+    // Check for Solo, but let others player a chance to react
+    } else if (highest_game_ > kSauspiel) {
+      for (int player = 0; player < kNumPlayers; player++) {
+        if (player_bids_[player] > kSauspiel && player != highest_player_) {
+          current_player_ = player;
+          phase_ = kSteigern;
+          return;
+        }
       }
     }
-    phase_ = kDiscardCards;
-}
-
-int SchafkopfState::CardsInSchafkopf() const {
-  int cards_in_schafkopf = 0;
-  for (int card = 0; card < kNumCards; card++) {
-    if (card_locations_[card] == kSchafkopf) cards_in_schafkopf++;
+    EndBidding(highest_player_, SchafkopfGameType(highest_game_));
   }
-  return cards_in_schafkopf;
+  current_player_ = NextPlayer();
 }
 
-void SchafkopfState::ApplyDiscardCardsAction(int card) {
-  SPIEL_CHECK_LT(CardsInSchafkopf(), 2);
-  SPIEL_CHECK_TRUE(current_player_ == solo_player_);
-  SPIEL_CHECK_TRUE(card_locations_[card] == PlayerToLocation(solo_player_));
-  card_locations_[card] = kSchafkopf;
+void SchafkopfState::ApplySteigernAction(int game_type) {
+  if (game_type_ <= highest_game_) {
+    player_bids_[current_player_] = kPass;
+    for (int player = 0; player < kNumPlayers; player++) {
+      if (player_bids_[player] > kSauspiel) {
+        current_player_ = player;
+        return;
+      }
+    }
+  // Increase player's game choice and let next player react
+  } else {
+    player_bids_[current_player_] = game_type;
+    highest_game_ = game_type;
+    highest_player_ = current_player_;
+    for (int player = 0; player < kNumPlayers; player++) {
+      if (player_bids_[player] > kSauspiel && player != current_player_) {
+        current_player_ = player;
+        return;
+      }
+    }
+  }
+  EndBidding(highest_player_, SchafkopfGameType(highest_game_));
+}
 
-  if (CardsInSchafkopf() == 2) {
+void SchafkopfState::ApplyRufsauAction(int rufsau) {
+    // Spieler has to find partner with Rufsau
+    // Id for Aces: 7 (Schellen), 15 (Herz), 23 (Gras), 31 (Eichel)
+    // Rufsau must not be on the own hand
+    switch (rufsau) {
+      case kSchellen:
+        rufsau_ = 7;
+      case kGras:
+        rufsau_ = 23;
+      case kEichel:
+        rufsau_ = 31;
+      default:
+        rufsau_= -1;
+    }
+
+    switch (card_locations_[rufsau_]) {
+      case kHand0:
+        partner_ = 0;
+      case kHand1:
+        partner_ = 1;
+      case kHand2:
+        partner_ = 2;
+      case kHand3:
+        partner_ = 3;
+    }
+
+    // Error handling for selecting himself
+    if (partner_ == spieler_) SpielFatalError("Spieler must not have the 'Rufsau' on his hand.");
+
+    // Start game
     phase_ = kPlay;
     current_player_ = 0;
-  }
 }
 
 void SchafkopfState::ApplyPlayAction(int card) {
