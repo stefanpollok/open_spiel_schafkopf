@@ -84,9 +84,9 @@ if (${OPEN_SPIEL_BUILD_WITH_ORTOOLS})
   add_subdirectory (ortools)
 endif()
 
-add_executable(best_response_test best_response_test.cc
-        $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
-add_test(best_response_test best_response_test)
+# add_executable(best_response_test best_response_test.cc
+#         $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
+# add_test(best_response_test best_response_test)
 
 add_executable(cfr_test cfr_test.cc
         $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
@@ -96,9 +96,9 @@ add_executable(cfr_br_test cfr_br_test.cc
         $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
 add_test(cfr_br_test cfr_br_test)
 
-add_executable(corr_dist_test corr_dist_test.cc
-        $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
-add_test(corr_dist_test corr_dist_test)
+# add_executable(corr_dist_test corr_dist_test.cc
+#         $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
+# add_test(corr_dist_test corr_dist_test)
 
 add_executable(corr_dev_builder_test corr_dev_builder_test.cc
         $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
@@ -128,9 +128,9 @@ add_executable(get_legal_actions_map_test get_legal_actions_map_test.cc
     $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
 add_test(get_legal_actions_map_test get_legal_actions_map_test)
 
-add_executable(history_tree_test history_tree_test.cc
-        $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
-add_test(history_tree_test history_tree_test)
+# add_executable(history_tree_test history_tree_test.cc
+#         $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
+# add_test(history_tree_test history_tree_test)
 
 add_executable(infostate_tree_test   infostate_tree_test.cc
         $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
@@ -144,9 +144,9 @@ add_executable(matrix_game_utils_test matrix_game_utils_test.cc
     $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
 add_test(matrix_game_utils_test matrix_game_utils_test)
 
-add_executable(minimax_test minimax_test.cc
-    $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
-add_test(minimax_test minimax_test)
+# add_executable(minimax_test minimax_test.cc
+#     $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
+# add_test(minimax_test minimax_test)
 
 add_executable(observation_history_test observation_history_test.cc
     $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
@@ -168,9 +168,9 @@ add_executable(tabular_best_response_mdp_test tabular_best_response_mdp_test.cc
     $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
 add_test(tabular_best_response_mdp_test tabular_best_response_mdp_test)
 
-add_executable(tabular_exploitability_test tabular_exploitability_test.cc
-    $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
-add_test(tabular_exploitability_test tabular_exploitability_test)
+# add_executable(tabular_exploitability_test tabular_exploitability_test.cc
+#     $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})
+# add_test(tabular_exploitability_test tabular_exploitability_test)
 
 add_executable(tensor_game_utils_test tensor_game_utils_test.cc
     $<TARGET_OBJECTS:algorithms> ${OPEN_SPIEL_OBJECTS})

@@ -222,10 +222,10 @@ set (OPEN_SPIEL_CORE_OBJECTS $<TARGET_OBJECTS:open_spiel_core>)
 
 set (OPEN_SPIEL_OBJECTS
   $<TARGET_OBJECTS:open_spiel_core>
-  $<TARGET_OBJECTS:bots>
+  # $<TARGET_OBJECTS:bots>
   $<TARGET_OBJECTS:games>
   $<TARGET_OBJECTS:game_transforms>
-  $<TARGET_OBJECTS:bridge_double_dummy_solver>
+  # $<TARGET_OBJECTS:bridge_double_dummy_solver>
   $<TARGET_OBJECTS:algorithms>
   $<TARGET_OBJECTS:utils>
   $<TARGET_OBJECTS:tests>
@@ -301,7 +301,7 @@ endif()
 include_directories(..)
 
 add_subdirectory (algorithms)
-add_subdirectory (bots)
+# add_subdirectory (bots)
 add_subdirectory (examples)
 add_subdirectory (games)
 add_subdirectory (game_transforms)

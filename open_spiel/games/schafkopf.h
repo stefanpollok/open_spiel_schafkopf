@@ -54,9 +54,11 @@ inline constexpr int kNumPhases = 5;
 inline constexpr int kNumGameTypes = 18;
 inline constexpr int kNumTricks = kNumCards / kNumPlayers;
 inline constexpr int kBiddingActionBase = kNumCards;  // First bidding action after card action id.
+inline constexpr int kRufenActionBase = kNumCards + kNumGameTypes;
+inline constexpr int kSteigernActionBase = kNumCards + kNumGameTypes + kNumSuits;
+inline constexpr int kNumSteigernGameBase = 10;
 inline constexpr int kNumBiddingActions = kNumGameTypes;
-// CHECK
-inline constexpr int kNumActions = kNumCards + kNumBiddingActions;
+inline constexpr int kNumActions = kNumCards + kNumBiddingActions + kNumSuits + 7;
 inline constexpr char kEmptyCardSymbol[] = "🂠";
 
 inline constexpr int kObservationTensorSize =

@@ -25,8 +25,8 @@ namespace open_spiel {
 namespace schafkopf {
 namespace {
 
-const GameType kGameType{/*short_name=*/"Sk",
-                         /*long_name=*/"Schafkopf",
+const GameType kGameType{/*short_name=*/"schafkopf",
+                         /*long_name=*/"schafkopf",
                          GameType::Dynamics::kSequential,
                          GameType::ChanceMode::kExplicitStochastic,
                          GameType::Information::kImperfectInformation,
@@ -126,7 +126,7 @@ std::string PhaseToString(Phase phase) {
     case kSteigern:
       return "steigern";
     case kRufen:
-      return "calling Rufsau";
+      return "rufen";
     case kHeiraten:
       return "Hochzeit";
     case kPlay:
@@ -496,6 +496,17 @@ void SchafkopfState::ApplySteigernAction(int game_type) {
   EndBidding(highest_player_, SchafkopfGameType(highest_game_));
 }
 
+void SchafkopfState::EndBidding(Player winner, SchafkopfGameType game_type) {
+    spieler_ = winner;
+    current_player_ = winner;
+    game_type_ = game_type;
+    if (game_type == kSauspiel) {
+      phase_ = kRufen;
+    } else {
+      phase_ = kPlay;
+    }
+}
+
 void SchafkopfState::ApplyRufenAction(int rufsau) {
     // Spieler has to find partner with Rufsau
     // Id for Aces: 7 (Schellen), 15 (Herz), 23 (Gras), 31 (Eichel)
@@ -580,6 +591,7 @@ void SchafkopfState::ScoreUp() {
   if (game_type_ != kRamsch && (points_spieler_ < 30 || points_nicht_spieler_ < 30)) {
     game_cost_ = game_cost_ + 1;
   }
+  // TODO: Klopfer
   // TODO: Kontra
   // TODO: Laufende
   
@@ -687,6 +699,26 @@ std::vector<Action> SchafkopfState::BiddingLegalActions() const {
   legal_actions.push_back(kBiddingActionBase + kSolo_Gras);
   legal_actions.push_back(kBiddingActionBase + kSolo_Eichel);
   legal_actions.push_back(kBiddingActionBase + kRamsch);
+  return legal_actions;
+}
+
+std::vector<Action> SchafkopfState::RufenLegalActions() const {
+  std::vector<Action> legal_actions;
+  legal_actions.push_back(kRufenActionBase + kSchellen);
+  legal_actions.push_back(kRufenActionBase + kGras);
+  legal_actions.push_back(kRufenActionBase + kEichel);
+  return legal_actions;
+}
+
+std::vector<Action> SchafkopfState::SteigernLegalActions() const {
+  std::vector<Action> legal_actions;
+  legal_actions.push_back(kBiddingActionBase + kPass);
+  legal_actions.push_back(kBiddingActionBase + kGeier - kNumSteigernGameBase);
+  legal_actions.push_back(kBiddingActionBase + kWenz - kNumSteigernGameBase);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Schellen - kNumSteigernGameBase);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Herz - kNumSteigernGameBase);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Gras - kNumSteigernGameBase);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Eichel - kNumSteigernGameBase);
   return legal_actions;
 }
 

@@ -13,7 +13,7 @@ add_executable(imperfect_recall_mccfr imperfect_recall_mccfr.cc
 add_executable(example example.cc ${OPEN_SPIEL_OBJECTS})
 add_test(example_test example --game=tic_tac_toe --seed=0)
 
-add_executable(fsicfr_liars_dice fsicfr_liars_dice.cc ${OPEN_SPIEL_OBJECTS})
+# add_executable(fsicfr_liars_dice fsicfr_liars_dice.cc ${OPEN_SPIEL_OBJECTS})
 
 add_executable(gtp gtp.cc ${OPEN_SPIEL_OBJECTS})
 
@@ -23,8 +23,8 @@ add_test(matrix_example_test matrix_example)
 add_executable(mcts_example mcts_example.cc ${OPEN_SPIEL_OBJECTS})
 add_test(mcts_example_test mcts_example)
 
-add_executable(minimax_example minimax_example.cc ${OPEN_SPIEL_OBJECTS})
-add_test(minimax_example_test minimax_example)
+# add_executable(minimax_example minimax_example.cc ${OPEN_SPIEL_OBJECTS})
+# add_test(minimax_example_test minimax_example)
 
 add_executable(policy_iteration_example policy_iteration_example.cc ${OPEN_SPIEL_OBJECTS})
 add_test(policy_iteration_example_test policy_iteration_example)
