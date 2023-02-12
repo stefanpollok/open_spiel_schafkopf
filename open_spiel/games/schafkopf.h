@@ -50,6 +50,7 @@ inline constexpr int kNumRanks = 8;
 inline constexpr int kNumSuits = 4;
 inline constexpr int kNumCards = kNumRanks * kNumSuits;
 inline constexpr int kNumPlayers = 4;
+inline constexpr int kNumPhases = 5;
 inline constexpr int kNumGameTypes = 18;
 inline constexpr int kNumTricks = kNumCards / kNumPlayers;
 inline constexpr int kBiddingActionBase = kNumCards;  // First bidding action after card action id.
@@ -58,14 +59,12 @@ inline constexpr int kNumBiddingActions = kNumGameTypes;
 inline constexpr int kNumActions = kNumCards + kNumBiddingActions;
 inline constexpr char kEmptyCardSymbol[] = "🂠";
 
-// CHECK
 inline constexpr int kObservationTensorSize =
     kNumPlayers                    // Player position
-    + 3                            // Phase
+    + kNumPhases                      // Phase
     + kNumCards                    // Players cards
     + kNumPlayers * kNumGameTypes  // All players' bids
     + kNumPlayers                  // Who's playing
-    + kNumCards                    // Cards in the Schafkopf
     + kNumGameTypes                // Game type
     + kNumPlayers                  // Who started the current trick
     + kNumPlayers * kNumCards      // Cards played to the current trick
@@ -122,7 +121,7 @@ enum CardLocation{
 enum Phase {
   kDeal = 0,
   kBidding = 1,
-  kRufsau = 2,
+  kRufen = 2,
   kHeiraten = 3,
   kSteigern = 4,
   kPlay = 5,
@@ -191,12 +190,12 @@ class SchafkopfState : public State {
   std::vector<Action> DealLegalActions() const;
   std::vector<Action> BiddingLegalActions() const;
   std::vector<Action> SteigernLegalActions() const;
-  std::vector<Action> RufsauLegalActions() const;
+  std::vector<Action> RufenLegalActions() const;
   std::vector<Action> PlayLegalActions() const;
   void ApplyDealAction(int card);
   void ApplyBiddingAction(int game_type);
   void ApplySteigernAction(int game_type);
-  void ApplyRufsauAction(int rufsau);
+  void ApplyRufenAction(int rufsau);
   void ApplyPlayAction(int card);
 
   void EndBidding(Player winner, SchafkopfGameType game_type);
@@ -235,6 +234,7 @@ class SchafkopfState : public State {
   std::array<Trick, kNumTricks> tricks_{};  // Tricks played so far.
   int points_spieler_ = 0;
   int points_nicht_spieler_ = 0;
+  int game_cost_ = 0;
   std::vector<double> returns_ = std::vector<double>(kNumPlayers);
 };
 

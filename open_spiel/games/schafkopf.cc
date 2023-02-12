@@ -125,7 +125,7 @@ std::string PhaseToString(Phase phase) {
       return "bidding";
     case kSteigern:
       return "steigern";
-    case kRufsau:
+    case kRufen:
       return "calling Rufsau";
     case kHeiraten:
       return "Hochzeit";
@@ -404,8 +404,8 @@ void SchafkopfState::DoApplyAction(Action action) {
       return ApplyBiddingAction(action - kBiddingActionBase);
     case kSteigern:
       return ApplySteigernAction(action);
-    case kRufsau:
-      return ApplyRufsauAction(action);
+    case kRufen:
+      return ApplyRufenAction(action);
     case kPlay:
       return ApplyPlayAction(action);
     case kGameOver:
@@ -459,9 +459,9 @@ void SchafkopfState::ApplyBiddingAction(int game_type) {
       return;
     // Check for Solo, but let others player a chance to react
     } else if (highest_game_ > kSauspiel) {
-      for (int player = 0; player < kNumPlayers; player++) {
-        if (player_bids_[player] > kSauspiel && player != highest_player_) {
-          current_player_ = player;
+      for (int pl = 0; pl < kNumPlayers; pl++) {
+        if (player_bids_[pl] > kSauspiel && pl != highest_player_) {
+          current_player_ = pl;
           phase_ = kSteigern;
           return;
         }
@@ -475,9 +475,9 @@ void SchafkopfState::ApplyBiddingAction(int game_type) {
 void SchafkopfState::ApplySteigernAction(int game_type) {
   if (game_type_ <= highest_game_) {
     player_bids_[current_player_] = kPass;
-    for (int player = 0; player < kNumPlayers; player++) {
-      if (player_bids_[player] > kSauspiel) {
-        current_player_ = player;
+    for (int pl = 0; pl < kNumPlayers; pl++) {
+      if (player_bids_[pl] > kSauspiel) {
+        current_player_ = pl;
         return;
       }
     }
@@ -486,9 +486,9 @@ void SchafkopfState::ApplySteigernAction(int game_type) {
     player_bids_[current_player_] = game_type;
     highest_game_ = game_type;
     highest_player_ = current_player_;
-    for (int player = 0; player < kNumPlayers; player++) {
-      if (player_bids_[player] > kSauspiel && player != current_player_) {
-        current_player_ = player;
+    for (int pl = 0; pl < kNumPlayers; pl++) {
+      if (player_bids_[pl] > kSauspiel && pl != current_player_) {
+        current_player_ = pl;
         return;
       }
     }
@@ -496,7 +496,7 @@ void SchafkopfState::ApplySteigernAction(int game_type) {
   EndBidding(highest_player_, SchafkopfGameType(highest_game_));
 }
 
-void SchafkopfState::ApplyRufsauAction(int rufsau) {
+void SchafkopfState::ApplyRufenAction(int rufsau) {
     // Spieler has to find partner with Rufsau
     // Id for Aces: 7 (Schellen), 15 (Herz), 23 (Gras), 31 (Eichel)
     // Rufsau must not be on the own hand
@@ -543,57 +543,70 @@ void SchafkopfState::ApplyPlayAction(int card) {
     current_player_ = last_trick_winner_;
     // When num_cards_played_ == kNumCards + kNumCardsInSchafkopf CurrentTrick() is
     // the same as PreviousTrick() and we don't want to overwrite it.
-    if (num_cards_played_ < kNumCards - kNumCardsInSchafkopf) {
+    if (num_cards_played_ < kNumCards) {
       CurrentTrick() = Trick(current_player_);
     }
     // Winner plays next card.
-    if (last_trick_winner_ == solo_player_) {
-        points_solo_ += PreviousTrick().Points();
-        if (game_type_ == kNullGame) {
-          // The solo player loses a Null game if they win any trick. The trick
-          // they win could be without points so we add one to make sure ScoreUp
-          // knows that the solo_player has won a trick.
-          points_solo_++;
-          phase_ = kGameOver;
-          ScoreUp();
-        }
+    if (last_trick_winner_ == spieler_ || last_trick_winner_ == partner_) {
+        points_spieler_ += PreviousTrick().Points();
     } else {
-      points_team_ += PreviousTrick().Points();
+      points_nicht_spieler_ += PreviousTrick().Points();
     }
   } else {
       current_player_ = NextPlayer();
   }
 
-  if (num_cards_played_ == kNumCards - kNumCardsInSchafkopf) {
+  if (num_cards_played_ == kNumCards) {
     phase_ = kGameOver;
     ScoreUp();
   }
 }
 
+// Scores in Schafkopf
+// Sauspiel 2 | Solo 5 | Schneider 1 | Laufende 1
+// Game is won if Spieler has more than 60 points.
+// If one team has below 30 points, they are "Schneider".
 void SchafkopfState::ScoreUp() {
-  if (game_type_ == kNullGame) {
-    // Since we're using points as a reward we need to come up with some special
-    // rule for Null.
-    if (points_solo_ > 0) {
-      points_solo_ = 30;
-      points_team_ = 90;
-    } else {
-      points_solo_ = 90;
-      points_team_ = 30;
+  switch (game_type_) {
+      case kSauspiel:
+        game_cost_ = 2;
+      case kRamsch:
+        game_cost_ = 2;
+      default:
+        game_cost_ = 5;
     }
-  } else {
-    // Solo player gets the cards in the Schafkopf (unless Null is played).
-    for (int card = 0; card < kNumCards; card++) {
-      if (card_locations_[card] == kSchafkopf) {
-        points_solo_ += CardValue(card);
-      }
-    }
+  
+  // Schneider
+  if (game_type_ != kRamsch && (points_spieler_ < 30 || points_nicht_spieler_ < 30)) {
+    game_cost_ = game_cost_ + 1;
   }
+  // TODO: Kontra
+  // TODO: Laufende
+  
   for (int pl = 0; pl < kNumPlayers; ++pl) {
-    if (solo_player_ == pl) {
-      returns_[pl] = (points_solo_ - 60) / 120.0;
+    // Spieler wins
+    if (points_spieler_ > 60 ) {
+      if (spieler_ == pl || partner_ == pl) {
+        // Solo spieler gets money from all other players
+        if (partner_ == -1) {
+          returns_[pl] = 3 * game_cost_;
+        } else {
+          returns_[pl] = game_cost_;
+        }
+      } else {
+        returns_[pl] = -game_cost_;
+      }
     } else {
-      returns_[pl] = (points_team_ - 60) / 240.0;
+      if (spieler_ == pl || partner_ == pl) {
+        // Solo spieler gets money from all other players
+        if (partner_ == -1) {
+          returns_[pl] = -(3 * game_cost_);
+        } else {
+          returns_[pl] = -game_cost_;
+        }
+      } else {
+        returns_[pl] = game_cost_;
+      }
     }
   }
 }
@@ -603,7 +616,7 @@ std::string SchafkopfState::CardLocationsToString() const {
   std::string hand0 = "Player 0: ";
   std::string hand1 = "Player 1: ";
   std::string hand2 = "Player 2: ";
-  std::string schafkopf =  "Schafkopf:     ";
+  std::string hand3 = "Player 3: ";
   for (int i = 0; i < kNumCards; i++) {
     switch (card_locations_[i]) {
       case kDeck:
@@ -618,15 +631,15 @@ std::string SchafkopfState::CardLocationsToString() const {
       case kHand2:
         absl::StrAppendFormat(&hand2, "%s ", ToCardSymbol(i));
         break;
-      case kSchafkopf:
-        absl::StrAppendFormat(&schafkopf, "%s ", ToCardSymbol(i));
+      case kHand3:
+        absl::StrAppendFormat(&hand3, "%s ", ToCardSymbol(i));
         break;
       default:
         break;
     }
   }
   return absl::StrFormat("%s\n%s\n%s\n%s\n%s\n",
-                         deck, hand0, hand1, hand2, schafkopf);
+                         deck, hand0, hand1, hand2, hand3);
 }
 
 std::vector<Action> SchafkopfState::LegalActions() const {
@@ -635,8 +648,10 @@ std::vector<Action> SchafkopfState::LegalActions() const {
       return DealLegalActions();
     case kBidding:
       return BiddingLegalActions();
-    case kDiscardCards:
-      return DiscardCardsLegalActions();
+    case kSteigern:
+      return SteigernLegalActions();
+    case kRufen:
+      return RufenLegalActions();
     case kPlay:
       return PlayLegalActions();
     default:
@@ -656,22 +671,22 @@ std::vector<Action> SchafkopfState::DealLegalActions() const {
 std::vector<Action> SchafkopfState::BiddingLegalActions() const {
   std::vector<Action> legal_actions;
   legal_actions.push_back(kBiddingActionBase + kPass);
-  legal_actions.push_back(kBiddingActionBase + kDiamondsTrump);
-  legal_actions.push_back(kBiddingActionBase + kHeartsTrump);
-  legal_actions.push_back(kBiddingActionBase + kSpadesTrump);
-  legal_actions.push_back(kBiddingActionBase + kClubsTrump);
-  legal_actions.push_back(kBiddingActionBase + kGrand);
-  legal_actions.push_back(kBiddingActionBase + kNullGame);
-  return legal_actions;
-}
-
-std::vector<Action> SchafkopfState::DiscardCardsLegalActions() const {
-  std::vector<Action> legal_actions;
-  for (int card = 0; card < kNumCards; ++card) {
-    if (card_locations_[card] == current_player_ + 1) {
-      legal_actions.push_back(card);
-    }
-  }
+  legal_actions.push_back(kBiddingActionBase + kSauspiel);
+  legal_actions.push_back(kBiddingActionBase + kGeier_Schellen);
+  legal_actions.push_back(kBiddingActionBase + kGeier_Herz);
+  legal_actions.push_back(kBiddingActionBase + kGeier_Gras);
+  legal_actions.push_back(kBiddingActionBase + kGeier_Eichel);
+  legal_actions.push_back(kBiddingActionBase + kWenz_Schellen);
+  legal_actions.push_back(kBiddingActionBase + kWenz_Herz);
+  legal_actions.push_back(kBiddingActionBase + kWenz_Gras);
+  legal_actions.push_back(kBiddingActionBase + kWenz_Eichel);
+  legal_actions.push_back(kBiddingActionBase + kGeier);
+  legal_actions.push_back(kBiddingActionBase + kWenz);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Schellen);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Herz);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Gras);
+  legal_actions.push_back(kBiddingActionBase + kSolo_Eichel);
+  legal_actions.push_back(kBiddingActionBase + kRamsch);
   return legal_actions;
 }
 
@@ -682,22 +697,44 @@ std::vector<Action> SchafkopfState::PlayLegalActions() const {
     // Check if we can follow suit.
     int first_card = CurrentTrick().FirstCard();
     int suit = CardSuit(first_card);
-    if (game_type_ == kNullGame) {
-      for (int rank = 0; rank < kNumRanks; ++rank) {
-        int card = static_cast<int>(suit) * kNumRanks + rank;
-        if (card_locations_[card] == PlayerToLocation(current_player_)) {
-          legal_actions.push_back(card);
-        }
-      }
-    } else {
-      // This is a bid fidely but it makes sure the legal actions are sorted
-      // (which is required), which the special status of jacks makes hard
-      // otherwise.
+
+    // This is a bit fiddly but it makes sure the legal actions are sorted
+    // (which is required), which the special status of Ober / Unter makes hard
+    // otherwise.
+    if (game_type_ == kSauspiel || game_type_ == kSolo_Schellen ||
+        game_type_ == kSolo_Herz || game_type_ == kSolo_Gras ||
+        game_type_ == kSolo_Eichel || game_type_ == kRamsch) {
       for (int card = 0; card < kNumCards; ++card) {
         if ((IsTrump(first_card) && IsTrump(card)) ||
             (suit == CardSuit(card) &&
-             CardRank(card) != kJack &&
-             CardRank(first_card) != kJack)) {
+              CardRank(card) != kUnter && CardRank(card) != kOber &&
+              CardRank(first_card) != kUnter && CardRank(first_card) != kOber)) {
+          if (card_locations_[card] == PlayerToLocation(current_player_)) {
+            legal_actions.push_back(card);
+          }
+        }
+      }
+    } else if (game_type_ == kWenz || game_type_ == kWenz_Schellen ||
+        game_type_ == kWenz_Herz || game_type_ == kWenz_Gras ||
+        game_type_ == kWenz_Eichel) {
+      for (int card = 0; card < kNumCards; ++card) {
+        if ((IsTrump(first_card) && IsTrump(card)) ||
+            (suit == CardSuit(card) &&
+              CardRank(card) != kUnter &&
+              CardRank(first_card) != kUnter)) {
+          if (card_locations_[card] == PlayerToLocation(current_player_)) {
+            legal_actions.push_back(card);
+          }
+        }
+      }
+    } else if (game_type_ == kGeier || game_type_ == kGeier_Schellen ||
+        game_type_ == kGeier_Herz || game_type_ == kGeier_Gras ||
+        game_type_ == kGeier_Eichel) {
+      for (int card = 0; card < kNumCards; ++card) {
+        if ((IsTrump(first_card) && IsTrump(card)) ||
+            (suit == CardSuit(card) &&
+              CardRank(card) != kOber &&
+              CardRank(first_card) != kOber)) {
           if (card_locations_[card] == PlayerToLocation(current_player_)) {
             legal_actions.push_back(card);
           }
@@ -744,7 +781,7 @@ void SchafkopfState::ObservationTensor(Player player,
   ptr += kNumPlayers;
   // Phase
   if (phase_ >= kBidding && phase_ <= kPlay) ptr[phase_ - kBidding] = 1;
-  ptr += 3;
+  ptr += kNumPhases;
   // Players Cards
   for (int i = 0; i < kNumCards; ++i)
     if (card_locations_[i] == PlayerToLocation(player)) ptr[i] = 1;
@@ -755,14 +792,9 @@ void SchafkopfState::ObservationTensor(Player player,
     ptr += kNumGameTypes;
   }
   // Who is the solo player.
-  if (solo_player_ >= 0) ptr[solo_player_] = 1;
+  if (spieler_ >= 0) ptr[spieler_] = 1;
+  if (partner_ >= 0) ptr[partner_] = 1;
   ptr += kNumPlayers;
-  // Information about the Schafkopf only for the solo_player_.
-  if (player == solo_player_) {
-    for (int i = 0; i < kNumCards; ++i)
-      if (card_locations_[i] == kSchafkopf) ptr[i] = 1;
-  }
-  ptr += kNumCards;
   // Game type
   ptr[game_type_] = 1;
   ptr += kNumGameTypes;
@@ -826,12 +858,14 @@ std::string SchafkopfState::ObservationString(Player player) const {
   ptr += kNumPlayers;
   Phase phase = kDeal;
   if (ptr[0]) phase = kBidding;
-  else if (ptr[1]) phase = kDiscardCards;
-  else if (ptr[2]) phase = kPlay;
+  else if (ptr[1]) phase = kRufen;
+  else if (ptr[2]) phase = kHeiraten;
+  else if (ptr[3]) phase = kSteigern;
+  else if (ptr[4]) phase = kPlay;
   else
     phase = kGameOver;
   absl::StrAppend(&rv, "|Phase:", PhaseToString(phase));
-  ptr += 3;
+  ptr += kNumPhases;
   std::vector<int> player_cards = GetCardsFromMultiHot(ptr);
   absl::StrAppend(&rv, "|Hand:", CardsToString(player_cards));
   ptr += kNumCards;
@@ -842,12 +876,14 @@ std::string SchafkopfState::ObservationString(Player player) const {
         &rv, SchafkopfGameTypeToString(static_cast<SchafkopfGameType>(player_bid)), " ");
     ptr += kNumGameTypes;
   }
-  Player solo_player = GetIntFromOneHot(ptr, kNumPlayers);
-  absl::StrAppend(&rv, "|SoloPl:", solo_player);
-  ptr += kNumPlayers;
-  std::vector<int> schafkopf_cards = GetCardsFromMultiHot(ptr);
-  absl::StrAppend(&rv, "|Schafkopf:", CardsToString(schafkopf_cards));
-  ptr += kNumCards;
+  Player spieler = GetIntFromOneHot(ptr, kNumPlayers);
+  absl::StrAppend(&rv, "|Spieler:", spieler);
+  ptr += spieler;
+  if (GetIntFromOneHot(ptr, kNumPlayers - spieler) != -1) {
+    Player partner = GetIntFromOneHot(ptr, kNumPlayers - spieler);
+    absl::StrAppend(&rv, "|Partner:", partner);
+  }
+  ptr += (kNumPlayers - spieler);
   SchafkopfGameType game_type = SchafkopfGameType(GetIntFromOneHot(ptr, kNumGameTypes));
   absl::StrAppend(&rv, "|Game:", SchafkopfGameTypeToString(game_type));
   ptr += kNumGameTypes;
