@@ -298,6 +298,8 @@ std::string SchafkopfState::ToString() const {
     absl::StrAppendFormat(&result, "Spieler: %d\n", spieler_);
     absl::StrAppendFormat(&result, "Points (Spieler / Nicht-Spieler): (%d / %d)\n",
                           points_spieler_, points_nicht_spieler_);
+    // absl::StrAppendFormat(&result, "Points (0 / 1 / 2 / 3): (%d / %d / %d / %d)\n",
+    //                       points_[0], points_[1], points_[2], points_[3]);
     absl::StrAppendFormat(&result, "Current Trick: %s\n",
                           CurrentTrick().ToString());
     if (CurrentTrickIndex() > 0) {
@@ -498,7 +500,6 @@ void SchafkopfState::ApplySteigernAction(int game_type) {
 
 void SchafkopfState::EndBidding(Player winner, SchafkopfGameType game_type) {
     spieler_ = winner;
-    current_player_ = winner;
     game_type_ = game_type;
     if (game_type == kSauspiel) {
       phase_ = kRufen;
@@ -507,22 +508,21 @@ void SchafkopfState::EndBidding(Player winner, SchafkopfGameType game_type) {
     }
 }
 
-void SchafkopfState::ApplyRufenAction(int rufsau) {
+void SchafkopfState::ApplyRufenAction(int suit) {
     // Spieler has to find partner with Rufsau
     // Id for Aces: 7 (Schellen), 15 (Herz), 23 (Gras), 31 (Eichel)
     // Rufsau must not be on the own hand
-    switch (rufsau) {
+    int rufsau = -1;
+    switch (suit) {
       case kSchellen:
-        rufsau_ = 7;
+        rufsau = 7;
       case kGras:
-        rufsau_ = 23;
+        rufsau = 23;
       case kEichel:
-        rufsau_ = 31;
-      default:
-        rufsau_= -1;
+        rufsau = 31;
     }
 
-    switch (card_locations_[rufsau_]) {
+    switch (card_locations_[rufsau]) {
       case kHand0:
         partner_ = 0;
       case kHand1:
@@ -558,6 +558,7 @@ void SchafkopfState::ApplyPlayAction(int card) {
       CurrentTrick() = Trick(current_player_);
     }
     // Winner plays next card.
+    points_[last_trick_winner_] = PreviousTrick().Points();
     if (last_trick_winner_ == spieler_ || last_trick_winner_ == partner_) {
         points_spieler_ += PreviousTrick().Points();
     } else {
@@ -578,46 +579,59 @@ void SchafkopfState::ApplyPlayAction(int card) {
 // Game is won if Spieler has more than 60 points.
 // If one team has below 30 points, they are "Schneider".
 void SchafkopfState::ScoreUp() {
+  int game_cost = 0;
+
   switch (game_type_) {
       case kSauspiel:
-        game_cost_ = 2;
+        game_cost = 2;
       case kRamsch:
-        game_cost_ = 2;
+        game_cost = 2;
       default:
-        game_cost_ = 5;
+        game_cost = 5;
     }
   
-  // Schneider
-  if (game_type_ != kRamsch && (points_spieler_ < 30 || points_nicht_spieler_ < 30)) {
-    game_cost_ = game_cost_ + 1;
-  }
-  // TODO: Klopfer
-  // TODO: Kontra
-  // TODO: Laufende
-  
-  for (int pl = 0; pl < kNumPlayers; ++pl) {
-    // Spieler wins
-    if (points_spieler_ > 60 ) {
-      if (spieler_ == pl || partner_ == pl) {
-        // Solo spieler gets money from all other players
-        if (partner_ == -1) {
-          returns_[pl] = 3 * game_cost_;
-        } else {
-          returns_[pl] = game_cost_;
-        }
+  if (game_type_ == kRamsch) {
+    // TODO Check for players having the same number of points
+    for (int pl = 0; pl < kNumPlayers; ++pl) {
+      if (points_[pl] == *std::max_element(points_.begin(), points_.end())){
+        returns_[pl] = -3 * game_cost;
       } else {
-        returns_[pl] = -game_cost_;
+        returns_[pl] = game_cost;
       }
-    } else {
-      if (spieler_ == pl || partner_ == pl) {
-        // Solo spieler gets money from all other players
-        if (partner_ == -1) {
-          returns_[pl] = -(3 * game_cost_);
+    }
+  } else {
+    // Schneider
+    if (points_spieler_ < 30 || points_nicht_spieler_ < 30) {
+      game_cost += 1;
+    }
+    // TODO: Klopfer
+    // TODO: Kontra
+    // TODO: Laufende
+    
+    for (int pl = 0; pl < kNumPlayers; ++pl) {
+      // Spieler wins
+      if (points_spieler_ > 60 ) {
+        if (spieler_ == pl || partner_ == pl) {
+          // Solo spieler gets money from all other players
+          if (partner_ == -1) {
+            returns_[pl] = 3 * game_cost;
+          } else {
+            returns_[pl] = game_cost;
+          }
         } else {
-          returns_[pl] = -game_cost_;
+          returns_[pl] = -game_cost;
         }
       } else {
-        returns_[pl] = game_cost_;
+        if (spieler_ == pl || partner_ == pl) {
+          // Solo spieler gets money from all other players
+          if (partner_ == -1) {
+            returns_[pl] = -(3 * game_cost);
+          } else {
+            returns_[pl] = -game_cost;
+          }
+        } else {
+          returns_[pl] = game_cost;
+        }
       }
     }
   }
@@ -936,7 +950,14 @@ std::string SchafkopfState::ObservationString(Player player) const {
       if (card >= 0) absl::StrAppend(&rv, ToCardSymbol(card), " ");
       ptr += kNumCards;
     }
+    // absl::StrAppend(&rv, "|PlPoints:");
+    // for (int i = 0; i < kNumPlayers; i++) {
+    //   int points = GetIntFromOneHot(ptr, kNumCards);
+    //   absl::StrAppend(&rv, points, " ");
+    //   ptr += kNumPlayers;
+    // }
   }
+
   return rv;
 }
 

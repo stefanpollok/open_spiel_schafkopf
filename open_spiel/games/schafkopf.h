@@ -63,7 +63,7 @@ inline constexpr char kEmptyCardSymbol[] = "🂠";
 
 inline constexpr int kObservationTensorSize =
     kNumPlayers                    // Player position
-    + kNumPhases                      // Phase
+    + kNumPhases                   // Phase
     + kNumCards                    // Players cards
     + kNumPlayers * kNumGameTypes  // All players' bids
     + kNumPlayers                  // Who's playing
@@ -71,7 +71,8 @@ inline constexpr int kObservationTensorSize =
     + kNumPlayers                  // Who started the current trick
     + kNumPlayers * kNumCards      // Cards played to the current trick
     + kNumPlayers                  // Who started the previous trick
-    + kNumPlayers * kNumCards;     // Cards played to the previous trick
+    + kNumPlayers * kNumCards      // Cards played to the previous trick
+    + kNumPlayers;                 // Points of each player
 
 enum SchafkopfGameType {
   kUnknownGame = 0,
@@ -225,7 +226,6 @@ class SchafkopfState : public State {
   std::array<int, kNumPlayers> player_bids_;
   int highest_game_ = 0;
   int highest_player_ = 0;
-  int rufsau_;
 
   // Play related.
   Player spieler_ = kChancePlayerId;
@@ -236,7 +236,7 @@ class SchafkopfState : public State {
   std::array<Trick, kNumTricks> tricks_{};  // Tricks played so far.
   int points_spieler_ = 0;
   int points_nicht_spieler_ = 0;
-  int game_cost_ = 0;
+  std::vector<double> points_ = std::vector<double>(kNumPlayers);
   std::vector<double> returns_ = std::vector<double>(kNumPlayers);
 };
 
