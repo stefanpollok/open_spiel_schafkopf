@@ -55,10 +55,10 @@ inline constexpr int kNumGameTypes = 18;
 inline constexpr int kNumTricks = kNumCards / kNumPlayers;
 inline constexpr int kBiddingActionBase = kNumCards;  // First bidding action after card action id.
 inline constexpr int kRufenActionBase = kNumCards + kNumGameTypes;
-inline constexpr int kSteigernActionBase = kNumCards + kNumGameTypes + kNumSuits;
-inline constexpr int kNumSteigernGameBase = 10;
+// inline constexpr int kSteigernActionBase = kNumCards + kNumGameTypes + kNumSuits;
+// inline constexpr int kNumSteigernGameBase = 10;
 inline constexpr int kNumBiddingActions = kNumGameTypes;
-inline constexpr int kNumActions = kNumCards + kNumBiddingActions + kNumSuits + 7;
+inline constexpr int kNumActions = kNumCards + kNumBiddingActions + (kNumSuits - 1);
 inline constexpr char kEmptyCardSymbol[] = "🂠";
 
 inline constexpr int kObservationTensorSize =
@@ -224,6 +224,7 @@ class SchafkopfState : public State {
   // CardLocation for each card.
   std::array<CardLocation, kNumCards> card_locations_;
   std::array<int, kNumPlayers> player_bids_;
+  std::array<int, 3> rufsau_ = { 7, 23, 31};
   int highest_game_ = 0;
   int highest_player_ = 0;
 
