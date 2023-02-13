@@ -78,14 +78,14 @@ int main(int argc, char** argv) {
   std::cerr << "State:" << std::endl << state->ToString() << std::endl;
 
   while (!state->IsTerminal()) {
-    std::cerr << "player " << state->CurrentPlayer() << std::endl;
+    std::cerr << "Player" << state->CurrentPlayer() << std::endl;
 
     if (state->IsChanceNode()) {
       // Chance node; sample one according to underlying distribution.
       std::vector<std::pair<open_spiel::Action, double>> outcomes =
           state->ChanceOutcomes();
       open_spiel::Action action = open_spiel::SampleAction(outcomes, rng).first;
-      std::cerr << "sampled outcome: "
+      std::cerr << "Sampled outcome: "
                 << state->ActionToString(open_spiel::kChancePlayerId, action)
                 << std::endl;
       state->ApplyAction(action);
@@ -108,11 +108,11 @@ int main(int argc, char** argv) {
         if (show_infostate) {
           if (game->GetType().provides_information_state_tensor) {
             state->InformationStateTensor(player, absl::MakeSpan(infostate));
-            std::cerr << "player " << player << ": "
+            std::cerr << "Player" << player << ": "
                       << absl::StrJoin(infostate, " ") << std::endl;
           }
           if (game->GetType().provides_information_state_string) {
-            std::cerr << "player " << player << ": "
+            std::cerr << "Player" << player << ": "
                       << state->InformationStateString(player) << std::endl;
           }
         }
@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
           action = actions[dis(rng)];
         }
         joint_action.push_back(action);
-        std::cerr << "player " << player << " chose "
+        std::cerr << "Player" << player << " chose "
                   << state->ActionToString(player, action) << std::endl;
       }
 
@@ -140,11 +140,11 @@ int main(int argc, char** argv) {
         if (game->GetType().provides_information_state_tensor) {
           std::vector<float> infostate;
           state->InformationStateTensor(player, absl::MakeSpan(infostate));
-          std::cerr << "player " << player << ": "
+          std::cerr << "Player" << player << ": "
                     << absl::StrJoin(infostate, " ") << std::endl;
         }
         if (game->GetType().provides_information_state_string) {
-          std::cerr << "player " << player << ": "
+          std::cerr << "Player" << player << ": "
                     << state->InformationStateString(player) << std::endl;
         }
       }
@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
 
       absl::uniform_int_distribution<> dis(0, actions.size() - 1);
       auto action = actions[dis(rng)];
-      std::cerr << "chose action: " << state->ActionToString(player, action)
+      std::cerr << "Action: " << state->ActionToString(player, action)
                 << std::endl;
       state->ApplyAction(action);
     }

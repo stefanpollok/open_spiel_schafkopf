@@ -224,13 +224,13 @@ class SchafkopfState : public State {
   // CardLocation for each card.
   std::array<CardLocation, kNumCards> card_locations_;
   std::array<int, kNumPlayers> player_bids_;
-  std::array<int, 3> rufsau_ = { 7, 23, 31};
-  int highest_game_ = 0;
-  int highest_player_ = 0;
+  std::array<int, 3> rufsau_ = { 7, 23, 31 };
+  SchafkopfGameType highest_game_ = kUnknownGame;
+  Player highest_player_ = kChancePlayerId;
 
   // Play related.
   Player spieler_ = kChancePlayerId;
-  Player partner_ = -1;
+  Player partner_ = kChancePlayerId;
   Player current_player_ = kChancePlayerId;  // The player next to make a move.
   Player last_trick_winner_ = kChancePlayerId;
   int num_cards_played_ = 0;

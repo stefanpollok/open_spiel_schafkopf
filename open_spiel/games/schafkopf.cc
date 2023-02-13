@@ -82,13 +82,13 @@ std::string ToCardSymbol(int card) {
 std::string SuitToString(Suit suit) {
   switch (suit) {
     case kEichel:
-      return "E";
+      return "Eichel";
     case kGras:
-      return "G";
+      return "Gras";
     case kHerz:
-      return "H";
+      return "Herz";
     case kSchellen:
-      return "S";
+      return "Schellen";
     default:
       return "error";
   }
@@ -105,13 +105,13 @@ std::string RankToString(Rank rank) {
     case kTen:
       return "10";
     case kUnter:
-      return "U";    
+      return "Unter";    
     case kOber:
-      return "O";
+      return "Ober";
     case kKing:
-      return "K";
+      return "König";
     case kAce:
-      return "A";
+      return "Ass";
     default:
       return "error";
   }
@@ -156,7 +156,7 @@ int CardValue(int card) {
 }
 
 std::string CardToString(int card) {
-  return SuitToString(CardSuit(card)) + RankToString(CardRank(card));
+  return SuitToString(CardSuit(card)) + "-" + RankToString(CardRank(card));
 }
 
 std::string CardsToString(const std::vector<int>& cards) {
@@ -173,7 +173,7 @@ std::string SchafkopfGameTypeToString(SchafkopfGameType trump_game) {
     case kUnknownGame:
       return "unknown/pass";
     case kSauspiel:
-      return "Saupsiel";
+      return "Sauspiel";
     case kHochzeit:
       return "Hochzeit";
     case kWenz_Eichel:
@@ -208,6 +208,19 @@ std::string SchafkopfGameTypeToString(SchafkopfGameType trump_game) {
       return "Ramsch";
     case kStock:
       return "Stock";
+    default:
+      return "error";
+  }
+}
+
+std::string RufsauToString(int rufsau) {
+  switch (rufsau) {
+    case 0:
+      return "Bums";
+    case 1:
+      return "Die Blaue";
+    case 2:
+      return "De Oide dreibt de Buam zam";
     default:
       return "error";
   }
@@ -281,9 +294,11 @@ SchafkopfState::SchafkopfState(std::shared_ptr<const Game> game)
 std::string SchafkopfState::ActionToString(Player player, Action action_id) const {
   if (action_id < kBiddingActionBase) {
     return CardToString(action_id);
-  } else {
+  } else if (action_id >= kBiddingActionBase && action_id < kRufenActionBase) {
     return SchafkopfGameTypeToString(
         static_cast<SchafkopfGameType>(action_id - kBiddingActionBase));
+  } else {
+    return RufsauToString(action_id - kRufenActionBase);
   }
 }
 
@@ -295,7 +310,6 @@ std::string SchafkopfState::ToString() const {
   if (phase_ == kPlay || phase_ == kGameOver) {
     absl::StrAppendFormat(&result, "Last trick won by player %d\n",
                           last_trick_winner_);
-    absl::StrAppendFormat(&result, "Spieler: %d\n", spieler_);
     absl::StrAppendFormat(&result, "Points (Spieler / Nicht-Spieler): (%d / %d)\n",
                           points_spieler_, points_nicht_spieler_);
     // absl::StrAppendFormat(&result, "Points (0 / 1 / 2 / 3): (%d / %d / %d / %d)\n",
@@ -307,8 +321,8 @@ std::string SchafkopfState::ToString() const {
                             PreviousTrick().ToString());
     }
   }
-  absl::StrAppendFormat(&result, "Game Type: %s\n",
-                SchafkopfGameTypeToString(game_type_));
+  absl::StrAppendFormat(&result, "Game Type: %s [%d | %d] \n",
+                SchafkopfGameTypeToString(game_type_), spieler_, partner_);
   return result;
 }
 
@@ -407,7 +421,7 @@ void SchafkopfState::DoApplyAction(Action action) {
     // case kSteigern:
     //   return ApplySteigernAction(action);
     case kRufen:
-      return ApplyRufenAction(action);
+      return ApplyRufenAction(action - kRufenActionBase);
     case kPlay:
       return ApplyPlayAction(action);
     case kGameOver:
@@ -443,22 +457,18 @@ void SchafkopfState::ApplyDealAction(int card) {
 }
 
 // TODO: Add Hochzeit
-void SchafkopfState::ApplyBiddingAction(int game_type) {
+void SchafkopfState::ApplyBiddingAction(int player_bid) {
   // Check for new highest game
-  if (game_type > highest_game_) {
-    highest_game_ = game_type;
+  if (player_bid > highest_game_) {
+    highest_game_ = static_cast<SchafkopfGameType>(player_bid);
     highest_player_ = current_player_;
   }
   // All four players have made a choice      
   if (current_player_ == 3) {
-    // Check for Ramsch
-    if (highest_game_ == kPass) {
-      EndBidding(-1, SchafkopfGameType(kRamsch));
-    } else {
-      EndBidding(highest_player_, SchafkopfGameType(highest_game_));
-    }
+    EndBidding(highest_player_, SchafkopfGameType(highest_game_));
+  } else {
+    current_player_ = NextPlayer();
   }
-  current_player_ = NextPlayer();
 }
 
 // void SchafkopfState::ApplySteigernAction(int game_type) {
@@ -488,41 +498,24 @@ void SchafkopfState::ApplyBiddingAction(int game_type) {
 void SchafkopfState::EndBidding(Player winner, SchafkopfGameType game_type) {
     spieler_ = winner;
     game_type_ = game_type;
+
     if (game_type == kSauspiel) {
+      current_player_ = winner;
       phase_ = kRufen;
     } else {
+      current_player_ = 0;
+      if (game_type == kPass) game_type_ = kRamsch;
       phase_ = kPlay;
     }
 }
 
-void SchafkopfState::ApplyRufenAction(int suit) {
-    // Spieler has to find partner with Rufsau
-    // Id for Aces: 7 (Schellen), 15 (Herz), 23 (Gras), 31 (Eichel)
-    // Rufsau must not be on the own hand
-    int rufsau = -1;
-    switch (suit) {
-      case kSchellen:
-        rufsau = 7;
-      case kGras:
-        rufsau = 23;
-      case kEichel:
-        rufsau = 31;
+void SchafkopfState::ApplyRufenAction(int action_id) {
+    for (int pl = 0; pl < kNumPlayers; ++pl) {  
+      if (card_locations_[rufsau_[action_id]] == PlayerToLocation(pl)) {
+        partner_ = pl;
+      }
     }
-
-    switch (card_locations_[rufsau]) {
-      case kHand0:
-        partner_ = 0;
-      case kHand1:
-        partner_ = 1;
-      case kHand2:
-        partner_ = 2;
-      case kHand3:
-        partner_ = 3;
-    }
-
-    // Error handling for selecting himself
-    if (partner_ == spieler_) SpielFatalError("Spieler must not have the 'Rufsau' on his hand.");
-
+    SPIEL_CHECK_FALSE(partner_ == spieler_);
     // Start game
     phase_ = kPlay;
     current_player_ = 0;
@@ -687,46 +680,46 @@ std::vector<Action> SchafkopfState::BiddingLegalActions() const {
   // bidding only allows for higher games
   // Farbwnez / Farbgeier < Wenz / Geier < Solo
   if (highest_game_ <= kWenz) {
-    legal_actions.push_back(kBiddingActionBase + kSolo_Schellen);
-    legal_actions.push_back(kBiddingActionBase + kSolo_Herz);
-    legal_actions.push_back(kBiddingActionBase + kSolo_Gras);
-    legal_actions.push_back(kBiddingActionBase + kSolo_Eichel);
+    // legal_actions.push_back(kBiddingActionBase + kSolo_Schellen);
+    // legal_actions.push_back(kBiddingActionBase + kSolo_Herz);
+    // legal_actions.push_back(kBiddingActionBase + kSolo_Gras);
+    // legal_actions.push_back(kBiddingActionBase + kSolo_Eichel);
 
-    if (highest_game_ <= kWenz_Eichel) {
-      legal_actions.push_back(kBiddingActionBase + kGeier);
-      legal_actions.push_back(kBiddingActionBase + kWenz);
+    // if (highest_game_ <= kWenz_Eichel) {
+    //   legal_actions.push_back(kBiddingActionBase + kGeier);
+    //   legal_actions.push_back(kBiddingActionBase + kWenz);
 
-      if (highest_game_ <= kHochzeit) {
-        legal_actions.push_back(kBiddingActionBase + kGeier_Schellen);
-        legal_actions.push_back(kBiddingActionBase + kGeier_Herz);
-        legal_actions.push_back(kBiddingActionBase + kGeier_Gras);
-        legal_actions.push_back(kBiddingActionBase + kGeier_Eichel);
-        legal_actions.push_back(kBiddingActionBase + kWenz_Schellen);
-        legal_actions.push_back(kBiddingActionBase + kWenz_Herz);
-        legal_actions.push_back(kBiddingActionBase + kWenz_Gras);
-        legal_actions.push_back(kBiddingActionBase + kWenz_Eichel);
-      }
+    //   if (highest_game_ <= kHochzeit) {
+    //     legal_actions.push_back(kBiddingActionBase + kGeier_Schellen);
+    //     legal_actions.push_back(kBiddingActionBase + kGeier_Herz);
+    //     legal_actions.push_back(kBiddingActionBase + kGeier_Gras);
+    //     legal_actions.push_back(kBiddingActionBase + kGeier_Eichel);
+    //     legal_actions.push_back(kBiddingActionBase + kWenz_Schellen);
+    //     legal_actions.push_back(kBiddingActionBase + kWenz_Herz);
+    //     legal_actions.push_back(kBiddingActionBase + kWenz_Gras);
+    //     legal_actions.push_back(kBiddingActionBase + kWenz_Eichel);
+    //   }
 
-      if (highest_game_ == kPass) {
-        // check for being "gesperrt" in Sauspiel, i.e., not be able to call an ace
-        bool gesperrt = true;
-        for (int i = 0; i < 3; ++i) {
-          // Rufsau cannot be on the player's hand
-          if (gesperrt && card_locations_[rufsau_[i]] != PlayerToLocation(current_player_)) {
-            // The player must have at least one card of the same suit
-            for (int card = 0; card < kNumRanks; ++card) {
-              card += kNumRanks * CardSuit(rufsau_[i]);
-              if (CardRank(card) != kUnter && CardRank(card) != kOber) {
-                if (card_locations_[card] == PlayerToLocation(current_player_)) {
-                  legal_actions.push_back(kBiddingActionBase + kSauspiel);
-                  gesperrt = false;
+        if (highest_game_ == kPass) {
+          // check for being "gesperrt" in Sauspiel, i.e., not be able to call an ace
+          bool gesperrt = true;
+          for (int i = 0; i < 3; ++i) {
+            // Rufsau cannot be on the player's hand
+            if (gesperrt && card_locations_[rufsau_[i]] != PlayerToLocation(current_player_)) {
+              // The player must have at least one card of the same suit
+              for (int card = 0; card < kNumRanks; ++card) {
+                card += kNumRanks * CardSuit(rufsau_[i]);
+                if (CardRank(card) != kUnter && CardRank(card) != kOber) {
+                  if (card_locations_[card] == PlayerToLocation(current_player_)) {
+                    legal_actions.push_back(kBiddingActionBase + kSauspiel);
+                    gesperrt = false;
+                  }
                 }
-              }
-            } 
+              } 
+            }
           }
         }
-      }
-    }
+    //}
   }
   // Ramsch cannot be called
   //legal_actions.push_back(kBiddingActionBase + kRamsch);
@@ -745,8 +738,9 @@ std::vector<Action> SchafkopfState::RufenLegalActions() const {
         if (CardRank(card) != kUnter && CardRank(card) != kOber) {
           if (card_locations_[card] == PlayerToLocation(current_player_)) {
             // Adding suit to legal actions
-            legal_actions.push_back(kRufenActionBase + i + 1);
+            legal_actions.push_back(kRufenActionBase + i);
             gesperrt = false;
+            break;
           }
         }
       } 
