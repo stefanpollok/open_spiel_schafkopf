@@ -684,23 +684,6 @@ std::vector<Action> SchafkopfState::DealLegalActions() const {
 std::vector<Action> SchafkopfState::BiddingLegalActions() const {
   std::vector<Action> legal_actions;
   legal_actions.push_back(kBiddingActionBase + kPass);
-  // check for being "gesperrt" in Sauspiel, i.e., not be able to call an ace
-  bool gesperrt = true;
-  for (int i = 0; i < 3; ++i) {
-    // Rufsau cannot be on the player's hand
-    if (gesperrt && card_locations_[rufsau_[i]] != PlayerToLocation(current_player_)) {
-      // The player must have at least one card of the same suit
-      for (int card = 0; card < kNumRanks; ++card) {
-        card += kNumRanks * CardSuit(rufsau_[i]);
-        if (CardRank(card) != kUnter && CardRank(card) != kOber) {
-          if (card_locations_[card] == PlayerToLocation(current_player_)) {
-            legal_actions.push_back(kBiddingActionBase + kSauspiel);
-            gesperrt = false;
-          }
-        }
-      } 
-    }
-  }
   // bidding only allows for higher games
   // Farbwnez / Farbgeier < Wenz / Geier < Solo
   if (highest_game_ <= kWenz) {
@@ -722,6 +705,26 @@ std::vector<Action> SchafkopfState::BiddingLegalActions() const {
         legal_actions.push_back(kBiddingActionBase + kWenz_Herz);
         legal_actions.push_back(kBiddingActionBase + kWenz_Gras);
         legal_actions.push_back(kBiddingActionBase + kWenz_Eichel);
+      }
+
+      if (highest_game_ == kPass) {
+        // check for being "gesperrt" in Sauspiel, i.e., not be able to call an ace
+        bool gesperrt = true;
+        for (int i = 0; i < 3; ++i) {
+          // Rufsau cannot be on the player's hand
+          if (gesperrt && card_locations_[rufsau_[i]] != PlayerToLocation(current_player_)) {
+            // The player must have at least one card of the same suit
+            for (int card = 0; card < kNumRanks; ++card) {
+              card += kNumRanks * CardSuit(rufsau_[i]);
+              if (CardRank(card) != kUnter && CardRank(card) != kOber) {
+                if (card_locations_[card] == PlayerToLocation(current_player_)) {
+                  legal_actions.push_back(kBiddingActionBase + kSauspiel);
+                  gesperrt = false;
+                }
+              }
+            } 
+          }
+        }
       }
     }
   }
